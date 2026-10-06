@@ -137,10 +137,15 @@ body>main,body>.wrap,body>header,body>nav,body>section,body>footer,.nav,.shell,.
 </div><div style="padding:26px;position:relative;overflow:hidden"><div id="modeContent"></div></div></div></div></section>
 <style>
 .mode{width:100%;border:1px solid transparent;background:transparent;color:#7f899a;padding:12px 13px;border-radius:12px;text-align:left;font:600 12px Inter;margin:3px 0;cursor:pointer;transition:.25s}.mode:hover{color:#fff;background:rgba(255,255,255,.035)}.mode.active{color:#071008;background:var(--lime);box-shadow:0 0 25px rgba(201,255,74,.15)}.modePanel{animation:panelIn .45s cubic-bezier(.2,.8,.2,1)}@keyframes panelIn{from{opacity:0;transform:translateY(10px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}.metricLine{display:grid;grid-template-columns:110px 1fr 70px;align-items:center;gap:12px;margin:18px 0;font-size:11px}.metricTrack{height:7px;background:#20242d;border-radius:99px;overflow:hidden}.metricFill{height:100%;border-radius:99px;background:linear-gradient(90deg,#6575ff,var(--lime));transform-origin:left;animation:grow .8s cubic-bezier(.2,.8,.2,1)}@keyframes grow{from{transform:scaleX(0)}}.pulseOrb{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;margin:18px auto;background:radial-gradient(circle at 35% 30%,rgba(201,255,74,.32),rgba(201,255,74,.05) 45%,transparent 70%);border:1px solid rgba(201,255,74,.22);box-shadow:0 0 70px rgba(201,255,74,.12);animation:breathe 2.8s infinite}.decision{font-size:38px;font-weight:900;letter-spacing:-.055em;text-align:center}.decisionSub{text-align:center;color:var(--muted);font-size:12px;max-width:500px;margin:10px auto;line-height:1.6}@media(max-width:650px){.cockpitGrid{grid-template-columns:1fr!important}.cockpitGrid>div:first-child{border-right:0!important;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:4px}.metricLine{grid-template-columns:75px 1fr 50px}}
+
+/* BUILD 004.01 — performance pass */
+.section,.weekCycle,.flowSection{content-visibility:auto;contain-intrinsic-size:auto 620px}
+.constellation,.capitalScene,.flowSection{contain:layout paint}
+@media (prefers-reduced-motion:reduce){.orb,.ringGlow,.floatChip,.capitalScene:before,.capitalScene:after,.capitalCore,.capitalCore:before,.energyLine,.flowSection:before,.flowOrb:before,.flowOrb:after,.live i,.flowStatus i,.gradient{animation:none!important}.reveal{transition:none}}
 </style>
 <div class="footer">РАЗГОН 20К · LEVEL 04 / 20 · LIVE STRATEGY JOURNAL · НЕ ГАРАНТИЯ ДОХОДНОСТИ</div></div>
 <script>
-const root=document.documentElement;addEventListener('pointermove',e=>{root.style.setProperty('--mx',e.clientX+'px');root.style.setProperty('--my',e.clientY+'px')});
+const root=document.documentElement;let rootPointerRAF=0,rootPX=0,rootPY=0;addEventListener('pointermove',e=>{rootPX=e.clientX;rootPY=e.clientY;if(rootPointerRAF)return;rootPointerRAF=requestAnimationFrame(()=>{root.style.setProperty('--mx',rootPX+'px');root.style.setProperty('--my',rootPY+'px');rootPointerRAF=0})},{passive:true});
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');if(e.target.querySelector('#chartLine'))setTimeout(()=>document.getElementById('chartLine').style.strokeDashoffset='0',250)}}),{threshold:.13});document.querySelectorAll('.reveal').forEach(x=>obs.observe(x));
 document.querySelectorAll('.counter').forEach(el=>{let done=false;const o=new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;let to=+el.dataset.to,dec=+(el.dataset.decimals||0),suf=el.dataset.suffix||'',start=performance.now();function tick(t){let q=Math.min((t-start)/1200,1),v=to*(1-Math.pow(1-q,3));el.textContent=v.toLocaleString('ru-RU',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(q<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}});o.observe(el)});
 document.querySelectorAll('.tilt').forEach(c=>{c.addEventListener('pointermove',e=>{let r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;c.style.setProperty('--cx',x+'px');c.style.setProperty('--cy',y+'px');let rx=(y/r.height-.5)*-5,ry=(x/r.width-.5)*7;c.style.transform='perspective(700px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-3px)'});c.addEventListener('pointerleave',()=>c.style.transform='')});
@@ -171,14 +176,15 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
 (()=>{
  const canvas=document.getElementById('capitalMesh'),ctx=canvas&&canvas.getContext('2d'),halo=document.getElementById('cursorHalo');
  if(!canvas||!ctx)return;
- let w=0,h=0,dpr=1,mx=-9999,my=-9999,tx=-9999,ty=-9999,scrollY=window.scrollY,pts=[];
+ let w=0,h=0,dpr=1,mx=-9999,my=-9999,tx=-9999,ty=-9999,scrollY=window.scrollY,pts=[],lastFrame=0;
  const palette=['rgba(201,255,74,','rgba(255,196,72,','rgba(113,132,255,'];
- function resize(){dpr=Math.min(devicePixelRatio||1,1.7);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);const count=Math.max(48,Math.min(92,Math.floor(w*h/18000)));pts=Array.from({length:count},(_,i)=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.1,r:Math.random()*1.25+.35,c:i%9===0?1:i%13===0?2:0,phase:Math.random()*6.28}))}
+ function resize(){dpr=Math.min(devicePixelRatio||1,1.5);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);const count=Math.max(34,Math.min(64,Math.floor(w*h/26000)));pts=Array.from({length:count},(_,i)=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.1,r:Math.random()*1.25+.35,c:i%9===0?1:i%13===0?2:0,phase:Math.random()*6.28}))}
  addEventListener('resize',resize);resize();
  addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;if(halo){halo.style.left=tx+'px';halo.style.top=ty+'px';halo.style.opacity='1'}});
  addEventListener('pointerleave',()=>{tx=ty=-9999;if(halo)halo.style.opacity='0'});
  addEventListener('scroll',()=>scrollY=window.scrollY,{passive:true});
  function frame(t){
+  if(document.hidden){requestAnimationFrame(frame);return} if(t-lastFrame<33){requestAnimationFrame(frame);return} lastFrame=t;
   mx+=(tx-mx)*.075;my+=(ty-my)*.075;ctx.clearRect(0,0,w,h);
   const sy=(scrollY*.018)%h;
   for(let p of pts){
