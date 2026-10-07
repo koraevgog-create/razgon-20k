@@ -53,7 +53,7 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  }requestAnimationFrame(frame)
 })();
 
-/* BUILD 004.04 — shared data engine */
+/* BUILD 004.05 — shared data engine */
 (()=>{
  const D=window.RAZGON_DATA;if(!D)return;
  const rub=(n,d=0)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽';
@@ -76,7 +76,7 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  window.RAZGON={data:D,rub,pct};
 })();
 
-/* BUILD 004.04 — generated portfolio & trade views */
+/* BUILD 004.05 — generated portfolio & trade views */
 (()=>{
  const R=window.RAZGON,D=R&&R.data;if(!D)return;
  const pos=document.getElementById('positionsTable');
@@ -87,4 +87,28 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  const core=document.querySelector('.node.core b');if(core)core.textContent=R.rub(D.portfolio.total,0);
  const nodeMap={yandex:'YDEX',rosneft:'ROSN',sber:'SBERP',t:'T',vk:'VKCO',vtb:'VTBR'};
  Object.entries(nodeMap).forEach(([key,ticker])=>{const n=document.querySelector('.node[data-key="'+key+'"] small'),p=D.positions.find(x=>x.ticker===ticker);if(n&&p)n.textContent='≈'+Math.round(p.weight)+'%'});
+})();
+
+/* BUILD 004.05 — real snapshot analytics */
+(()=>{
+ const R=window.RAZGON,D=R&&R.data;if(!D||!document.getElementById('equityChart'))return;
+ const snaps=D.snapshots||[], C=D.computed;
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('analyticsUpdated','Последний снимок · '+(snaps.at(-1)?.date||D.meta.updated));
+ set('analyticsRealized',(C.realized>=0?'+':'')+R.rub(C.realized,2));
+ const unreal=D.portfolio.pnl-C.realized;set('analyticsUnrealized',(unreal>=0?'+':'')+R.rub(unreal,2));
+ set('analyticsFees',R.rub(C.commissions,2));set('analyticsTrades',D.trades.length);
+ set('activeResult',(C.realized>=0?'+':'')+R.rub(C.realized,2));
+ set('snapshotCount',snaps.length+' '+(snaps.length===1?'снимок':'снимков'));
+ if(!snaps.length)return;
+ const start=snaps[0],last=snaps.at(-1),delta=last.total-start.total;
+ set('equityStart','Старт · '+start.date+' · '+R.rub(start.total,2));
+ set('equityLast','Последний · '+last.date+' · '+R.rub(last.total,2));
+ set('equityChange',(delta>=0?'+':'')+R.rub(delta,2));
+ const line=document.getElementById('equityLine'),area=document.getElementById('equityArea'),dots=document.getElementById('equityDots'),empty=document.getElementById('equityEmpty');
+ const vals=snaps.map(x=>x.total),min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,Math.max(max*.01,100));
+ const pts=snaps.map((x,i)=>{const px=snaps.length===1?350:24+i*(652/(snaps.length-1));const py=220-((x.total-(min-span*.15))/(span*1.3))*170;return [px,Math.max(28,Math.min(228,py))]});
+ if(snaps.length>1){const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');line.setAttribute('d',d);area.setAttribute('d',d+' L'+pts.at(-1)[0]+' 245 L'+pts[0][0]+' 245 Z');empty.style.display='none'}else{line.setAttribute('d','');area.setAttribute('d','')}
+ dots.innerHTML=pts.map((p,i)=>'<circle class="equityDot" cx="'+p[0]+'" cy="'+p[1]+'" r="5"><title>'+snaps[i].date+' · '+R.rub(snaps[i].total,2)+'</title></circle>').join('');
+ if(snaps.length<2)set('equityChange','История началась');
 })();
