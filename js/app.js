@@ -30,15 +30,15 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
 (()=>{
  const canvas=document.getElementById('capitalMesh'),ctx=canvas&&canvas.getContext('2d'),halo=document.getElementById('cursorHalo');
  if(!canvas||!ctx)return;
- let w=0,h=0,dpr=1,mx=-9999,my=-9999,tx=-9999,ty=-9999,scrollY=window.scrollY,pts=[],lastFrame=0;
+ let w=0,h=0,dpr=1,mx=-9999,my=-9999,tx=-9999,ty=-9999,scrollY=window.scrollY,pts=[],lastFrame=0,scrolling=false,scrollTimer=0;
  const palette=['rgba(201,255,74,','rgba(255,196,72,','rgba(113,132,255,'];
  function resize(){dpr=Math.min(devicePixelRatio||1,1.5);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);const count=Math.max(34,Math.min(64,Math.floor(w*h/26000)));pts=Array.from({length:count},(_,i)=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.1,r:Math.random()*1.25+.35,c:i%9===0?1:i%13===0?2:0,phase:Math.random()*6.28}))}
  addEventListener('resize',resize);resize();
  addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;if(halo){halo.style.left=tx+'px';halo.style.top=ty+'px';halo.style.opacity='1'}});
  addEventListener('pointerleave',()=>{tx=ty=-9999;if(halo)halo.style.opacity='0'});
- addEventListener('scroll',()=>scrollY=window.scrollY,{passive:true});
+ addEventListener('scroll',()=>{scrollY=window.scrollY;scrolling=true;clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>scrolling=false,120)},{passive:true});
  function frame(t){
-  if(document.hidden){requestAnimationFrame(frame);return} if(t-lastFrame<33){requestAnimationFrame(frame);return} lastFrame=t;
+  if(document.hidden||scrolling){requestAnimationFrame(frame);return} if(t-lastFrame<40){requestAnimationFrame(frame);return} lastFrame=t;
   mx+=(tx-mx)*.075;my+=(ty-my)*.075;ctx.clearRect(0,0,w,h);
   const sy=(scrollY*.018)%h;
   for(let p of pts){
