@@ -91,3 +91,11 @@ body>main,body>.wrap,body>header,body>nav,body>section,body>footer,.nav,.shell,.
 .section,.weekCycle,.flowSection{content-visibility:auto;contain-intrinsic-size:auto 620px}
 .constellation,.capitalScene,.flowSection{contain:layout paint}
 @media (prefers-reduced-motion:reduce){.orb,.ringGlow,.floatChip,.capitalScene:before,.capitalScene:after,.capitalCore,.capitalCore:before,.energyLine,.flowSection:before,.flowOrb:before,.flowOrb:after,.live i,.flowStatus i,.gradient{animation:none!important}.reveal{transition:none}}
+
+/* BUILD 004.02 — compositor optimization */
+.noise,.aurora,.gridbg,.orb{will-change:auto}
+#capitalMesh{will-change:transform;transform:translateZ(0);pointer-events:none}
+.nav{will-change:transform;transform:translateZ(0)}
+@media (max-width:900px){
+ .card,.weekNow,.weekArchive{backdrop-filter:none}
+}
