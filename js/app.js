@@ -52,3 +52,26 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
   requestAnimationFrame(frame)
  }requestAnimationFrame(frame)
 })();
+
+/* BUILD 004.04 — shared data engine */
+(()=>{
+ const D=window.RAZGON_DATA;if(!D)return;
+ const rub=(n,d=0)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽';
+ const pct=n=>(n>=0?'+':'')+Number(n).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+ D.positions.forEach(p=>p.weight=D.portfolio.total?100*p.value/D.portfolio.total:0);
+ D.computed={
+  invested:D.positions.reduce((a,p)=>a+p.value,0),
+  realized:D.trades.reduce((a,t)=>a+t.netProfit,0),
+  commissions:D.trades.reduce((a,t)=>a+t.commission,0),
+  weekProgress:D.week.target?100*D.week.realized/D.week.target:0,
+  largest:[...D.positions].sort((a,b)=>b.value-a.value)[0]
+ };
+ document.documentElement.dataset.build=D.meta.build;
+ document.querySelectorAll('[data-live="portfolio-total"]').forEach(x=>x.textContent=rub(D.portfolio.total,2));
+ document.querySelectorAll('[data-live="portfolio-pnl"]').forEach(x=>x.textContent=rub(D.portfolio.pnl,2));
+ document.querySelectorAll('[data-live="portfolio-pct"]').forEach(x=>x.textContent=pct(D.portfolio.pnlPct));
+ document.querySelectorAll('[data-live="week-realized"]').forEach(x=>x.textContent=rub(D.computed.realized,2));
+ document.querySelectorAll('[data-live="week-progress"]').forEach(x=>x.textContent=D.computed.weekProgress.toLocaleString('ru-RU',{maximumFractionDigits:2})+'%');
+ document.querySelectorAll('[data-live="cash"]').forEach(x=>x.textContent=rub(D.portfolio.cash,2));
+ window.RAZGON={data:D,rub,pct};
+})();
