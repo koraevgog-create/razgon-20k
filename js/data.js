@@ -10,5 +10,6 @@ window.RAZGON_DATA={
   {ticker:"VKCO",name:"VK",qty:5,price:121.95,value:609.75,pnl:5.25,pnlPct:.86},
   {ticker:"VTBR",name:"ВТБ",qty:9,price:55.745,value:501.71,pnl:51.26,pnlPct:11.37}
  ],
+ snapshots:[{date:"06.10.2026",total:21347.02,pnl:927.26,pnlPct:4.54,cash:1148.59,realized:40.11}],
  trades:[{id:1,date:"06.10.2026",ticker:"VTBR",side:"SELL",qty:8,price:55.23,grossProfit:41.44,commission:1.33,netProfit:40.11}]
 };
