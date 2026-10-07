@@ -75,3 +75,16 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  document.querySelectorAll('[data-live="cash"]').forEach(x=>x.textContent=rub(D.portfolio.cash,2));
  window.RAZGON={data:D,rub,pct};
 })();
+
+/* BUILD 004.04 — generated portfolio & trade views */
+(()=>{
+ const R=window.RAZGON,D=R&&R.data;if(!D)return;
+ const pos=document.getElementById('positionsTable');
+ if(pos)pos.innerHTML=D.positions.map(p=>'<div class="row"><div class="asset"><b>'+p.name+'</b><small>'+p.ticker+' · '+p.qty+' шт.</small></div><div class="num">'+R.rub(p.price,p.price%1?2:0)+'</div><div class="pnl '+(p.pnlPct>=0?'green':'red')+'">'+R.pct(p.pnlPct)+'</div></div>').join('');
+ const tradeHTML=t=>'<div class="trade"><div class="tradeNo">'+String(t.id).padStart(2,'0')+'</div><div><b>'+t.ticker+' · '+t.side+' '+t.qty+'</b><br><small>'+t.date+' · '+R.rub(t.price,2)+' · комиссия '+R.rub(t.commission,2)+'</small></div><div class="profit">'+(t.netProfit>=0?'+':'')+R.rub(t.netProfit,2)+'</div></div>';
+ const pl=document.getElementById('portfolioTradeLog');if(pl)pl.innerHTML=D.trades.map(tradeHTML).join('');
+ const tt=document.getElementById('tradesTable');if(tt)tt.innerHTML=D.trades.map(tradeHTML).join('');
+ const core=document.querySelector('.node.core b');if(core)core.textContent=R.rub(D.portfolio.total,0);
+ const nodeMap={yandex:'YDEX',rosneft:'ROSN',sber:'SBERP',t:'T',vk:'VKCO',vtb:'VTBR'};
+ Object.entries(nodeMap).forEach(([key,ticker])=>{const n=document.querySelector('.node[data-key="'+key+'"] small'),p=D.positions.find(x=>x.ticker===ticker);if(n&&p)n.textContent='≈'+Math.round(p.weight)+'%'});
+})();
