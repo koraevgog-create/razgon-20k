@@ -118,3 +118,18 @@ body>main,body>.wrap,body>header,body>nav,body>section,body>footer,.nav,.shell,.
 .chartMeta{display:flex;justify-content:space-between;gap:12px;color:#778190;font-size:10px}.chartMeta b{color:#c9ff4a}
 .compareEngine{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin:24px 0}.compareSide{padding:22px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.025)}.compareSide span{font-size:9px;letter-spacing:.16em;color:#7c8795}.compareSide b{display:block;font-size:28px;margin:8px 0}.compareSide small{color:#707b89;line-height:1.45}.versus{font-size:10px;color:#596271}.compareNote{font-size:11px;color:#8993a0;line-height:1.6;padding:15px;border-radius:14px;background:rgba(201,255,74,.035)}.statRows{margin-top:18px}.statRows>div{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:11px}.statRows span{color:#778190}
 @media(max-width:900px){.analyticsCards{grid-template-columns:1fr 1fr}.compareEngine{grid-template-columns:1fr}.versus{text-align:center}}
+
+/* BUILD 004.06 — desktop performance architecture
+   Preserve visual language while removing scroll-time GPU bottlenecks. */
+@media (hover:hover) and (pointer:fine){
+  /* Large live blurs over the viewport are the main desktop compositor cost. */
+  .aurora{filter:none!important;opacity:.38!important;mix-blend-mode:normal!important}
+  .ambientBeam,.atmoGlow{filter:none!important;mix-blend-mode:normal!important;opacity:.16!important}
+  .cursorHalo{filter:none!important;width:360px;height:360px;opacity:0}
+  .orb{filter:none!important;opacity:.18!important}
+  /* Glass remains visually translucent; avoid sampling/reblurring the page behind every card while scrolling. */
+  .card,.weekNow,.weekArchive,.missionMain,.riskPanel,.runway,.signalPanel,.constellation,.capitalScene,.flowSection,.cockpit,.portfolio,.journal,.floatChip,.satellite,.constInfo,.flowMetric{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(9,11,15,.94)!important}
+  /* Desktop mouse effects should transform only isolated layers. */
+  .card{transform-style:flat}
+}
