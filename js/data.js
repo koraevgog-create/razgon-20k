@@ -1,0 +1,14 @@
+window.RAZGON_DATA={
+ meta:{build:"004.04",level:"04",updated:"06.10.2026"},
+ portfolio:{total:21347.02,brokerage:21120.78,savings:225.40,cash:1148.59,pnl:927.26,pnlPct:4.54},
+ week:{number:1,day:2,target:500,realized:40.11},
+ positions:[
+  {ticker:"YDEX",name:"Яндекс",qty:2,price:3703,value:7406,pnl:395,pnlPct:5.63},
+  {ticker:"ROSN",name:"Роснефть",qty:15,price:345,value:5175,pnl:108.75,pnlPct:2.14},
+  {ticker:"SBERP",name:"Сбербанк-п",qty:15,price:282.5,value:4237.5,pnl:207.45,pnlPct:5.14},
+  {ticker:"T",name:"Т-Технологии",qty:7,price:271.54,value:1900.78,pnl:138.46,pnlPct:7.85},
+  {ticker:"VKCO",name:"VK",qty:5,price:121.95,value:609.75,pnl:5.25,pnlPct:.86},
+  {ticker:"VTBR",name:"ВТБ",qty:9,price:55.745,value:501.71,pnl:51.26,pnlPct:11.37}
+ ],
+ trades:[{id:1,date:"06.10.2026",ticker:"VTBR",side:"SELL",qty:8,price:55.23,grossProfit:41.44,commission:1.33,netProfit:40.11}]
+};
