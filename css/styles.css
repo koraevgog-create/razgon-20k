@@ -99,3 +99,9 @@ body>main,body>.wrap,body>header,body>nav,body>section,body>footer,.nav,.shell,.
 @media (max-width:900px){
  .card,.weekNow,.weekArchive{backdrop-filter:none}
 }
+
+/* BUILD 004.03 — multipage navigation */
+.siteTabs{display:flex;align-items:center;gap:5px;margin-left:auto;margin-right:14px}
+.siteTabs a{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7f8998;text-decoration:none;padding:8px 9px;border-radius:9px;transition:.2s ease}
+.siteTabs a:hover,.siteTabs a.active{color:#eef5df;background:rgba(201,255,74,.07)}
+@media(max-width:980px){.nav{flex-wrap:wrap;gap:8px}.siteTabs{order:3;width:100%;overflow-x:auto;margin:0;padding-bottom:3px}.siteTabs a{white-space:nowrap}.live{margin-left:auto}}
