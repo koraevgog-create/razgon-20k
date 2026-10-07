@@ -105,3 +105,16 @@ body>main,body>.wrap,body>header,body>nav,body>section,body>footer,.nav,.shell,.
 .siteTabs a{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7f8998;text-decoration:none;padding:8px 9px;border-radius:9px;transition:.2s ease}
 .siteTabs a:hover,.siteTabs a.active{color:#eef5df;background:rgba(201,255,74,.07)}
 @media(max-width:980px){.nav{flex-wrap:wrap;gap:8px}.siteTabs{order:3;width:100%;overflow-x:auto;margin:0;padding-bottom:3px}.siteTabs a{white-space:nowrap}.live{margin-left:auto}}
+
+/* BUILD 004.05 — real analytics */
+.analyticsCards{grid-template-columns:repeat(4,1fr)}
+.analyticsLayout{align-items:stretch}
+.equityChart{position:relative;height:290px;margin-top:8px}
+.equityChart svg{width:100%;height:260px;overflow:visible}
+.equityLine{fill:none;stroke:url(#eqLine);stroke-width:3;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 7px rgba(201,255,74,.18))}
+.equityArea{fill:url(#eqArea)}
+.equityDot{fill:#c9ff4a;stroke:#0b0d10;stroke-width:3;vector-effect:non-scaling-stroke}
+.equityEmpty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;color:#7e8998;font-size:12px;line-height:1.6;pointer-events:none}
+.chartMeta{display:flex;justify-content:space-between;gap:12px;color:#778190;font-size:10px}.chartMeta b{color:#c9ff4a}
+.compareEngine{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin:24px 0}.compareSide{padding:22px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.025)}.compareSide span{font-size:9px;letter-spacing:.16em;color:#7c8795}.compareSide b{display:block;font-size:28px;margin:8px 0}.compareSide small{color:#707b89;line-height:1.45}.versus{font-size:10px;color:#596271}.compareNote{font-size:11px;color:#8993a0;line-height:1.6;padding:15px;border-radius:14px;background:rgba(201,255,74,.035)}.statRows{margin-top:18px}.statRows>div{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.055);font-size:11px}.statRows span{color:#778190}
+@media(max-width:900px){.analyticsCards{grid-template-columns:1fr 1fr}.compareEngine{grid-template-columns:1fr}.versus{text-align:center}}
