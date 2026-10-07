@@ -1,5 +1,5 @@
 window.RAZGON_DATA={
- meta:{build:"004.05",level:"04",updated:"07.10.2026 23:01"},
+ meta:{build:"004.07",level:"04",updated:"07.10.2026 23:01"},
  portfolio:{total:21375.14,brokerage:21149.70,savings:225.44,cash:1148.59,pnl:955.21,pnlPct:4.67},
  week:{number:1,day:3,target:500,realized:40.11},
  positions:[
@@ -17,6 +17,14 @@ window.RAZGON_DATA={
  snapshots:[
   {date:"06.10.2026",total:21347.02,pnl:927.26,pnlPct:4.54,cash:1148.59,realized:40.11},
   {date:"07.10.2026",time:"23:01",total:21375.14,pnl:955.21,pnlPct:4.67,cash:1148.59,realized:40.11}
+ ],
+ radar:[
+  {ticker:"T",name:"Т-Технологии",status:"WATCH",action:"SELL PART",size:"3 из 7",zone:"276–280 ₽",trigger:"Импульс перед дивидендной отсечкой",invalidation:"Нет импульса / негативный фон",catalyst:"Дивиденд 4,7 ₽ · последний день под дивиденд 09.10",priority:1},
+  {ticker:"VTBR",name:"ВТБ",status:"HOLD",action:"HOLD",size:"9 шт.",zone:"Повторный вход не активен",trigger:"Новый подтверждённый сетап",invalidation:"Ухудшение тезиса",catalyst:"После частичной фиксации",priority:2},
+  {ticker:"YDEX",name:"Яндекс",status:"HOLD",action:"HOLD",size:"2 шт.",zone:"Без добавления",trigger:"Сильный импульс / новая оценка",invalidation:"Нет",catalyst:"Крупнейшая позиция портфеля",priority:3},
+  {ticker:"SBERP",name:"Сбербанк-п",status:"HOLD",action:"HOLD",size:"15 шт.",zone:"Без действия",trigger:"Новый катализатор",invalidation:"Нет",catalyst:"Core-позиция",priority:4},
+  {ticker:"ROSN",name:"Роснефть",status:"HOLD",action:"NO ADD",size:"15 шт.",zone:"Не увеличивать",trigger:"Только сильный новый сетап",invalidation:"Рост нефтяной концентрации",catalyst:"Крупная доля портфеля",priority:5},
+  {ticker:"VKCO",name:"VK",status:"WAIT",action:"HOLD",size:"5 шт.",zone:"Без добавления",trigger:"Катализатор / подтверждение тренда",invalidation:"Слабость бумаги",catalyst:"Спекулятивная позиция",priority:6}
  ],
  trades:[{id:1,date:"06.10.2026",ticker:"VTBR",side:"SELL",qty:8,price:55.23,grossProfit:41.44,commission:1.33,netProfit:40.11}]
 };
