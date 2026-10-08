@@ -115,3 +115,20 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
 
 /* BUILD 004.07 — Trading Radar renderer */
 (()=>{const R=window.RAZGON,D=R&&R.data,grid=document.getElementById('radarGrid');if(!D||!grid)return;const items=[...(D.radar||[])].sort((a,b)=>a.priority-b.priority);grid.innerHTML=items.map((x,i)=>'<article class="radarCard '+(i===0?'hot':'')+'"><div class="radarHead"><div><div class="radarTicker">'+x.ticker+'</div><div class="radarName">'+x.name+'</div></div><span class="radarStatus">'+x.status+'</span></div><div class="radarAction"><div><span>ДЕЙСТВИЕ</span><b>'+x.action+'</b></div><div class="radarZone"><span>ЗОНА / РАЗМЕР</span><b>'+x.zone+'</b><small>'+x.size+'</small></div></div><div class="radarFields"><div class="radarField"><span>ТРИГГЕР</span><b>'+x.trigger+'</b></div><div class="radarField"><span>ОТМЕНА</span><b>'+x.invalidation+'</b></div><div class="radarField"><span>КАТАЛИЗАТОР</span><b>'+x.catalyst+'</b></div></div></article>').join('');const active=items.filter(x=>x.status==='WATCH').length;document.getElementById('radarActive').textContent=active;document.getElementById('radarNext').textContent=items[0]?.ticker+' · '+items[0]?.action;const bar=document.getElementById('radarWeekBar');if(bar)requestAnimationFrame(()=>bar.style.width=Math.min(100,D.computed.weekProgress)+'%')})();
+
+/* BUILD 004.08 — Risk Engine */
+(()=>{const D=window.RAZGON_DATA,el=document.getElementById('riskTicker');if(!D||!el)return;
+const ids=['riskSide','riskEntry','riskStop','riskTarget','riskQty','riskFee'];const get=id=>document.getElementById(id),rub=n=>n.toLocaleString('ru-RU',{maximumFractionDigits:2,minimumFractionDigits:2})+' ₽';
+el.innerHTML=D.positions.map(p=>'<option value="'+p.ticker+'">'+p.name+' ('+p.ticker+')</option>').join('');
+function defaults(){const p=D.positions.find(x=>x.ticker===el.value);if(!p)return;get('riskEntry').value=p.price;get('riskStop').value=(p.price*.97).toFixed(2);get('riskTarget').value=(p.price*1.06).toFixed(2);get('riskQty').value=1;calc()}
+function calc(){const p=D.positions.find(x=>x.ticker===el.value),side=get('riskSide').value,entry=+get('riskEntry').value,stop=+get('riskStop').value,target=+get('riskTarget').value,qty=+get('riskQty').value,fee=+get('riskFee').value/100,out=get('riskOutput');
+if(!p||![entry,stop,target,qty,fee].every(Number.isFinite)||entry<=0||stop<=0||target<=0||qty<1||!Number.isInteger(qty)||fee<0){out.textContent='Введите корректные положительные цены и целое количество.';return}
+if(side==='buy'&&!(stop<entry&&target>entry)){out.textContent='Для покупки стоп должен быть ниже входа, а цель — выше.';return}
+if(side==='sell'&&!(stop>entry&&target<entry)){out.textContent='Для продажи имеющейся позиции используйте режим оценки движения после продажи: стоп выше цены продажи, цель ниже.';return}
+const nominal=entry*qty,available=side==='buy'?D.portfolio.cash:p.qty,limit=side==='buy'?nominal*(1+fee)<=available:qty<=available;
+const risk=(Math.abs(entry-stop)+fee*(entry+stop))*qty,reward=(Math.abs(target-entry)-fee*(entry+target))*qty,rr=risk>0?reward/risk:0;
+const portfolioWeight=nominal/D.portfolio.total*100;
+out.innerHTML='<div><span>Объём</span><b>'+rub(nominal)+'</b></div><div><span>Макс. плановый убыток*</span><b>'+rub(risk)+'</b></div><div><span>Потенциал после комиссий*</span><b>'+rub(reward)+'</b></div><div><span>Risk / Reward</span><b>'+rr.toFixed(2)+'</b></div><div><span>Доля от капитала</span><b>'+portfolioWeight.toFixed(1)+'%</b></div><div><span>Проверка лимита</span><b class="'+(limit?'green':'red')+'">'+(limit?'В пределах доступного':'Превышен доступный объём')+'</b></div>';
+}
+el.addEventListener('change',defaults);get('riskSide').addEventListener('change',()=>{const p=D.positions.find(x=>x.ticker===el.value);get('riskStop').value=(p.price*(get('riskSide').value==='buy'?.97:1.03)).toFixed(2);get('riskTarget').value=(p.price*(get('riskSide').value==='buy'?1.06:.94)).toFixed(2);calc()});ids.filter(x=>x!=='riskSide').forEach(id=>get(id).addEventListener('input',calc));defaults();
+})();
