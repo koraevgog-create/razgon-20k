@@ -196,3 +196,11 @@ select.addEventListener('change',()=>{e('gatePrice').value=D.positions.find(x=>x
 ['gateSide','gatePrice','gateQty','gateFee','gateMove','gateLimit'].forEach(id=>e(id).addEventListener('input',update));
 e('gatePrice').value=D.positions[0].price;update();
 })();
+
+/* LEVEL 07 BUILD 004.13 — verified-event journal */
+(()=>{const D=window.RAZGON_DATA,root=document.getElementById('intelEvents');if(!D||!root)return;
+const ticker=document.getElementById('intelTicker'),priority=document.getElementById('intelPriority');ticker.innerHTML+=[...new Set((D.events||[]).map(x=>x.ticker))].map(x=>'<option value="'+x+'">'+x+'</option>').join('');
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){const rows=(D.events||[]).filter(x=>(ticker.value==='all'||x.ticker===ticker.value)&&(priority.value==='all'||x.priority===priority.value));root.innerHTML=rows.length?rows.map(x=>'<article class="intelEvent"><div class="intelMeta"><b>'+esc(x.ticker)+'</b><span>'+esc(x.date)+'</span><span>'+esc(x.priority==='high'?'Высокий приоритет':x.priority==='medium'?'Средний приоритет':'Низкий приоритет')+'</span></div><h2>'+esc(x.title)+'</h2><p>'+esc(x.summary)+'</p><div class="intelStatus">'+(x.status==='verified'?'Источник проверен':'⚠ Требует проверки источника')+' · '+(x.impact==='negative'?'Негативное влияние':x.impact==='positive'?'Позитивное влияние':'Влияние неопределённо')+'</div><div class="intelDecision"><b>Решение:</b> '+esc(x.decision)+'</div>'+(x.sourceUrl?'<a href="'+esc(x.sourceUrl)+'" target="_blank" rel="noopener noreferrer">Первоисточник ↗</a>':'<small>Ссылка на подтверждённый источник пока отсутствует</small>')+'</article>').join(''):'<p>Событий с такими фильтрами нет.</p>'}
+ticker.addEventListener('change',render);priority.addEventListener('change',render);render();
+})();
