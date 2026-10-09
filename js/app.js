@@ -169,3 +169,30 @@ root.addEventListener('change',()=>{el('labPrice').value=D.positions.find(x=>x.t
 ['labSide','labQty','labPrice'].forEach(id=>el(id).addEventListener('input',simulate));
 el('labPrice').value=D.positions[0].price;limits();simulate();
 })();
+
+/* BUILD 004.12 — trade preflight, no orders */
+(()=>{const D=window.RAZGON_DATA,select=document.getElementById('gateTicker');if(!D||!select)return;
+const e=id=>document.getElementById(id),fmt=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
+select.innerHTML=D.positions.map(p=>'<option value="'+p.ticker+'">'+p.name+'</option>').join('');
+function update(){const p=D.positions.find(x=>x.ticker===select.value),side=e('gateSide').value,price=+e('gatePrice').value,qty=+e('gateQty').value,fee=+e('gateFee').value/100,move=+e('gateMove').value/100,limit=+e('gateLimit').value,out=e('gateOutput');
+if(!p||!(price>0)||!Number.isInteger(qty)||qty<1||!Number.isFinite(fee)||fee<0||fee>=1||!Number.isFinite(move)||move<0||!Number.isFinite(limit)||limit<1||limit>100){out.textContent='Проверьте параметры сделки.';return}
+const nominal=price*qty,commission=nominal*fee,avg=(p.value-p.pnl)/p.qty,oldShare=p.value/D.portfolio.total*100;
+const cards=[],warnings=[];let newValue,newTotal,newCash;
+if(side==='buy'){const exit=price*(1+move),roundFees=nominal*fee+exit*qty*fee,net=(exit-price)*qty-roundFees,breakeven=price*(1+fee)/(1-fee),need=nominal*(1+fee);
+newValue=p.value+nominal;newTotal=D.portfolio.total-commission;newCash=D.portfolio.cash-need;
+cards.push(['Оборот покупки',fmt(nominal)],['Комиссия входа',fmt(commission)],['Безубыточность продажи',fmt(breakeven)+' (+'+((breakeven/price-1)*100).toFixed(3)+'%)'],['Результат при росте '+(move*100).toFixed(1)+'%',(net>=0?'+':'')+fmt(net)],['Доступные деньги после',fmt(newCash)]);
+if(newCash<0)warnings.push('Недостаточно свободного кэша с учётом комиссии.');if(net<=0)warnings.push('Заданное движение не покрывает комиссии.');
+}else{if(qty>p.qty){out.textContent='Недостаточно акций для продажи: доступно '+p.qty+' шт.';return}
+const gross=(price-avg)*qty,net=gross-commission;newValue=p.value-nominal;newTotal=D.portfolio.total-commission;newCash=D.portfolio.cash+nominal-commission;
+cards.push(['Средняя себестоимость',fmt(avg)],['Валовый результат',(gross>=0?'+':'')+fmt(gross)],['Комиссия продажи',fmt(commission)],['Фиксируем после комиссии',(net>=0?'+':'')+fmt(net)],['Доступные деньги после',fmt(newCash)]);
+}
+const weight=newValue/newTotal*100;cards.push(['Доля компании',oldShare.toFixed(1)+'% → '+weight.toFixed(1)+'%']);if(weight>limit)warnings.push('Доля выбранной компании превышает лимит '+limit+'%.');
+const sector={YDEX:'Технологии',VKCO:'Технологии',T:'Финансы',SBERP:'Финансы',VTBR:'Финансы',ROSN:'Нефть и газ'};
+const sec=sector[p.ticker];let sectorVal=D.positions.filter(x=>sector[x.ticker]===sec).reduce((sum,x)=>sum+x.value,0);if(sec==='Нефть и газ')sectorVal+=(D.extras||[]).filter(x=>x.ticker==='ROSN_GIFT').reduce((sum,x)=>sum+x.value,0);
+sectorVal+=(side==='buy'?1:-1)*nominal;cards.push(['Доля отрасли после',(sectorVal/newTotal*100).toFixed(1)+'%']);if(sectorVal/newTotal>0.4)warnings.push('Доля отрасли превышает ориентир 40%.');
+out.innerHTML=cards.map(x=>'<div><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')+'<div style="grid-column:1/-1"><span>Итог проверки</span><b>'+(warnings.length?warnings.join(' · '):'Ограничения пройдены; это не рекомендация совершать сделку.')+'</b></div>';
+}
+select.addEventListener('change',()=>{e('gatePrice').value=D.positions.find(x=>x.ticker===select.value).price;update()});
+['gateSide','gatePrice','gateQty','gateFee','gateMove','gateLimit'].forEach(id=>e(id).addEventListener('input',update));
+e('gatePrice').value=D.positions[0].price;update();
+})();
