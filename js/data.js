@@ -1,5 +1,5 @@
 window.RAZGON_DATA={
- meta:{build:"004.18",level:"07",updated:"07.10.2026 23:01"},
+ meta:{build:"004.19",level:"07",updated:"07.10.2026 23:01"},
  portfolio:{total:21375.14,brokerage:21149.70,savings:225.44,cash:1148.59,pnl:955.21,pnlPct:4.67},
  week:{number:1,day:3,target:500,realized:40.11},
  positions:[
