@@ -132,3 +132,16 @@ out.innerHTML='<div><span>Объём</span><b>'+rub(nominal)+'</b></div><div><sp
 }
 el.addEventListener('change',defaults);get('riskSide').addEventListener('change',()=>{const p=D.positions.find(x=>x.ticker===el.value);get('riskStop').value=(p.price*(get('riskSide').value==='buy'?.97:1.03)).toFixed(2);get('riskTarget').value=(p.price*(get('riskSide').value==='buy'?1.06:.94)).toFixed(2);calc()});ids.filter(x=>x!=='riskSide').forEach(id=>get(id).addEventListener('input',calc));defaults();
 })();
+
+/* BUILD 004.09 — Portfolio Risk Overview */
+(()=>{const D=window.RAZGON_DATA,root=document.getElementById('riskDash');if(!D||!root)return;
+const total=D.portfolio.total,fmt=n=>n.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽';
+const sectors={YDEX:'Технологии',VKCO:'Технологии',T:'Финансы',SBERP:'Финансы',VTBR:'Финансы',ROSN:'Нефть и газ'};
+const sectorValues={},rows=[...D.positions,...(D.extras||[]).filter(x=>x.ticker==='ROSN_GIFT')];let known=0;
+for(const p of rows){const sec=sectors[p.ticker]||(p.ticker==='ROSN_GIFT'?'Нефть и газ':'Прочее');sectorValues[sec]=(sectorValues[sec]||0)+p.value;known+=p.value}
+const weights=rows.map(p=>({...p,weight:100*p.value/total})).sort((a,b)=>b.weight-a.weight);
+const top=weights[0],top3=weights.slice(0,3).reduce((a,p)=>a+p.weight,0),cash=100*D.portfolio.cash/total,stress=rows.reduce((a,p)=>a+p.value*.1,0);
+root.innerHTML=[['Крупнейшая позиция',top.name+' · '+top.weight.toFixed(1)+'%'],['Три крупнейшие',top3.toFixed(1)+'%'],['Свободный кэш',cash.toFixed(1)+'%'],['Падение акций на 10%','−'+fmt(stress)]].map(x=>'<div><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
+const sec=document.getElementById('riskSector');sec.innerHTML=Object.entries(sectorValues).sort((a,b)=>b[1]-a[1]).map(([name,val])=>'<div class="riskSectorRow"><span>'+name+'</span><div><i style="width:'+Math.min(100,val/total*100)+'%"></i></div><b>'+(val/total*100).toFixed(1)+'%</b></div>').join('');
+const alerts=[];if(top.weight>30)alerts.push('Концентрация: '+top.name+' занимает '+top.weight.toFixed(1)+'% портфеля (контрольный порог 30%).');if(top3>70)alerts.push('Три крупнейшие позиции занимают '+top3.toFixed(1)+'% капитала (контрольный порог 70%).');for(const [name,val] of Object.entries(sectorValues)){if(val/total>0.4)alerts.push('Отраслевой риск: '+name+' — '+(val/total*100).toFixed(1)+'% портфеля.')}document.getElementById('riskAlerts').innerHTML=alerts.map(t=>'<p>⚠ '+t+'</p>').join('')||'<p>Концентрации выше контрольных порогов не обнаружены.</p>';
+})();
