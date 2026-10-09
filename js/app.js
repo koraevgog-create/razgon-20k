@@ -145,3 +145,24 @@ root.innerHTML=[['Крупнейшая позиция',top.name+' · '+top.weigh
 const sec=document.getElementById('riskSector');sec.innerHTML=Object.entries(sectorValues).sort((a,b)=>b[1]-a[1]).map(([name,val])=>'<div class="riskSectorRow"><span>'+name+'</span><div><i style="width:'+Math.min(100,val/total*100)+'%"></i></div><b>'+(val/total*100).toFixed(1)+'%</b></div>').join('');
 const alerts=[];if(top.weight>30)alerts.push('Концентрация: '+top.name+' занимает '+top.weight.toFixed(1)+'% портфеля (контрольный порог 30%).');if(top3>70)alerts.push('Три крупнейшие позиции занимают '+top3.toFixed(1)+'% капитала (контрольный порог 70%).');for(const [name,val] of Object.entries(sectorValues)){if(val/total>0.4)alerts.push('Отраслевой риск: '+name+' — '+(val/total*100).toFixed(1)+'% портфеля.')}document.getElementById('riskAlerts').innerHTML=alerts.map(t=>'<p>⚠ '+t+'</p>').join('')||'<p>Концентрации выше контрольных порогов не обнаружены.</p>';
 })();
+
+/* BUILD 004.10 — interactive portfolio risk laboratory */
+(()=>{const D=window.RAZGON_DATA,root=document.getElementById('labTicker');if(!D||!root)return;
+const el=id=>document.getElementById(id),money=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
+const sector={YDEX:'Технологии',VKCO:'Технологии',T:'Финансы',SBERP:'Финансы',VTBR:'Финансы',ROSN:'Нефть и газ',ROSN_GIFT:'Нефть и газ'};
+const original=[...D.positions,...(D.extras||[]).filter(p=>p.ticker==='ROSN_GIFT')];const total=D.portfolio.total;
+root.innerHTML=D.positions.map(p=>'<option value="'+p.ticker+'">'+p.name+'</option>').join('');
+function limits(){const c=+el('labCompany').value,s=+el('labSector').value,t=+el('labTrade').value,drop=+el('labStress').value,out=el('labLimitsResult');if(!(c>=1&&c<=100&&s>=1&&s<=100&&t>0&&t<=20)){out.textContent='Проверьте значения лимитов.';return}
+const max=Math.max(...original.map(p=>p.value/total*100)),by={};original.forEach(p=>by[sector[p.ticker]]=(by[sector[p.ticker]]||0)+p.value);const maxSector=Math.max(...Object.values(by))/total*100,exposure=original.reduce((sum,p)=>sum+p.value,0);
+out.innerHTML='<div><span>Лимит компании</span><b>'+(max>c?'Превышен: ':'В норме: ')+max.toFixed(1)+'%</b></div><div><span>Лимит отрасли</span><b>'+(maxSector>s?'Превышен: ':'В норме: ')+maxSector.toFixed(1)+'%</b></div><div><span>Бюджет риска на сделку</span><b>'+money(total*t/100)+'</b></div><div><span>Стресс '+drop+'%</span><b>−'+money(exposure*drop/100)+'</b></div>'}
+function simulate(){const p=D.positions.find(x=>x.ticker===root.value),qty=+el('labQty').value,price=+el('labPrice').value,buy=el('labSide').value==='buy',out=el('labWhatResult');if(!p||!Number.isInteger(qty)||qty<1||!Number.isFinite(price)||price<=0){out.textContent='Укажите корректную цену и целое количество.';return}
+const amount=qty*price;if(buy&&amount>D.portfolio.cash+1e-8){out.textContent='Недостаточно свободных денег: требуется '+money(amount)+', доступно '+money(D.portfolio.cash)+'.';return}if(!buy&&qty>p.qty){out.textContent='Нельзя продать '+qty+' шт.: имеется '+p.qty+'.';return}
+const positions=original.map(x=>({...x}));const target=positions.find(x=>x.ticker===p.ticker);target.value+=(buy?1:-1)*amount;const cash=D.portfolio.cash+(buy?-1:1)*amount;const sectorTotals={};positions.forEach(x=>sectorTotals[sector[x.ticker]]=(sectorTotals[sector[x.ticker]]||0)+x.value);
+const before=p.value/total*100,after=target.value/total*100,largest=Math.max(...positions.map(x=>x.value/total*100));const maxSector=Math.max(...Object.values(sectorTotals))/total*100;const c=+el('labCompany').value,s=+el('labSector').value;
+out.innerHTML='<div><span>Доля '+p.ticker+'</span><b>'+before.toFixed(1)+'% → '+after.toFixed(1)+'%</b></div><div><span>Свободные деньги</span><b>'+money(cash)+'</b></div><div><span>Макс. доля компании</span><b>'+largest.toFixed(1)+'% '+(largest>c?'⚠':'✓')+'</b></div><div><span>Макс. доля отрасли</span><b>'+maxSector.toFixed(1)+'% '+(maxSector>s?'⚠':'✓')+'</b></div>';
+}
+root.addEventListener('change',()=>{el('labPrice').value=D.positions.find(x=>x.ticker===root.value).price;simulate()});
+['labCompany','labSector','labTrade','labStress'].forEach(id=>el(id).addEventListener('input',()=>{limits();simulate()}));
+['labSide','labQty','labPrice'].forEach(id=>el(id).addEventListener('input',simulate));
+el('labPrice').value=D.positions[0].price;limits();simulate();
+})();
