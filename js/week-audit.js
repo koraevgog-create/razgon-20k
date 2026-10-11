@@ -20,7 +20,7 @@
   text('.heroMeta>div:nth-child(3) span','ПОДТВЕРЖДЁННЫЕ ПРОДАЖИ');
   const heads=[...document.querySelectorAll('.sectionHead')];heads.forEach(h=>{if(h.querySelector('h2')?.textContent==='Прогресс недели'){const sub=h.querySelector('p');if(sub)sub.textContent=fmt(net)+' / '+fmt(D.week.target)+' ₽'}});
   const prog=document.querySelector('#weekbar');if(prog)prog.style.width=Math.min(100,percent)+'%';
-  const mode=document.getElementById('modeContent');if(mode){const goal=mode.querySelector('.decision');if(goal&&goal.textContent.includes('40,11'))goal.innerHTML=fmt(net)+' <span style="color:#657080">/ 500 ₽</span>';const sub=mode.querySelector('.decisionSub');if(sub&&sub.textContent.includes('8,02%'))sub.textContent=p+' выполнено · до цели '+rub(D.week.target-net);}
+  const mode=document.getElementById('modeContent');if(mode){const goal=mode.querySelector('.decision');if(goal&&goal.textContent.includes('403,57'))goal.innerHTML=fmt(net)+' <span style="color:#657080">/ 500 ₽</span>';const sub=mode.querySelector('.decisionSub');if(sub&&sub.textContent.includes('80,71%'))sub.textContent=p+' выполнено · до цели '+rub(D.week.target-net);}
   text('.capitalCore b',rub(D.portfolio.total,0));text('.flowOrb b',rub(D.portfolio.total,0));
   text('.satellite.sat1 b',signed(D.portfolio.pnl));text('.satellite.sat2 b',signed(net));text('.satellite.sat3 b',rub(D.portfolio.cash));
   text('.flowMetric.fm1 b',signed(D.portfolio.pnl));text('.flowMetric.fm2 b',signed(net));text('.flowMetric.fm3 b',rub(D.portfolio.cash));text('.flowMetric.fm4 b',p);
