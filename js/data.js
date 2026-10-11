@@ -1,7 +1,7 @@
 window.RAZGON_DATA={
  meta:{build:"004.20",level:"07",updated:"11.10.2026 12:37"},
  portfolio:{total:21186.35,brokerage:20960.76,savings:225.59,cash:1842.35,pnl:530.54,pnlPct:2.56},
- week:{number:1,day:7,target:500,realized:0},
+ week:{number:1,day:7,target:500,realized:322.39},
  positions:[
   {ticker:"YDEX",name:"Яндекс",qty:2,price:3385.5,value:6771,pnl:-125.5,pnlPct:-1.83},
   {ticker:"ROSN",name:"Роснефть",qty:10,price:378.5,value:3785,pnl:255.5,pnlPct:7.23},
@@ -35,7 +35,7 @@ window.RAZGON_DATA={
   {id:2,date:"09.10.2026",ticker:"VTBR",side:"SELL",qty:9,price:54.3,grossProfit:38.25,commission:1.47,netProfit:36.78},
   {id:3,date:"10.10.2026",ticker:"VKCO",side:"SELL",qty:5,price:123.95,grossProfit:15.25,commission:1.86,netProfit:13.39},
   {id:4,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07},
-  {id:5,date:"10.10.2026",ticker:"YDEX",side:"SELL",qty:1,price:3455,grossProfit:-50.5,commission:10.37,netProfit:-60.87},
+  {id:5,date:"09.10.2026",ticker:"YDEX",side:"SELL",qty:1,price:3455,grossProfit:-50.5,commission:10.37,netProfit:-60.87},
   {id:6,date:"10.10.2026",ticker:"YDEX",side:"SELL",qty:1,price:3371,grossProfit:-134.5,commission:10.11,netProfit:-144.61},
   {id:7,date:"10.10.2026",ticker:"T",side:"SELL",qty:5,price:265.4,grossProfit:22.48,commission:3.98,netProfit:18.5},
   {id:8,date:"10.10.2026",ticker:"T",side:"SELL",qty:5,price:265.4,grossProfit:73,commission:3.98,netProfit:69.02}
