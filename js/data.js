@@ -1,6 +1,6 @@
 window.RAZGON_DATA={
- meta:{build:"004.21",level:"07",updated:"11.10.2026 12:37"},
- portfolio:{total:21186.35,brokerage:20960.76,savings:225.59,cash:1842.35,pnl:530.54,pnlPct:2.56},
+ meta:{build:"004.23",level:"07",updated:"11.10.2026 14:21 · данные пользователя"},
+ portfolio:{total:20915.89,brokerage:20915.89,savings:0,contributed:19900,cash:1842.35,pnl:1015.89,pnlPct:5.1},
  week:{number:1,day:7,target:500,realized:403.57},
  positions:[
   {ticker:"YDEX",name:"Яндекс",qty:2,price:3385.5,value:6771,pnl:-125.5,pnlPct:-1.83},
@@ -12,14 +12,13 @@ window.RAZGON_DATA={
   {ticker:"ARLIFT",name:"Арлифт 001Р-01 · облигация",qty:1,price:854.08,value:854.08,pnl:12.8,pnlPct:1.52}
  ],
  extras:[
-  {ticker:"ROSN_GIFT",name:"Роснефть · подарок",qty:null,price:null,value:155.18,pnl:33.87,pnlPct:27.91},
-  {ticker:"MMF",name:"Денежный рынок · Инвесткопилка",qty:1,price:165.8,value:165.8,pnl:.4,pnlPct:.24}
+  {ticker:"ROSN_GIFT",name:"Роснефть · подарок",qty:null,price:null,value:155.18,pnl:33.87,pnlPct:27.91}
  ],
  snapshots:[
   {date:"06.10.2026",total:21347.02,pnl:927.26,pnlPct:4.54,cash:1148.59,realized:40.11},
   {date:"07.10.2026",time:"23:01",total:21375.14,pnl:955.21,pnlPct:4.67,cash:1148.59,realized:40.11},
   {date:"10.10.2026",total:21343.18,pnl:1025.48,pnlPct:5.04},
-  {date:"11.10.2026",time:"12:37",total:21186.35,pnl:530.54,pnlPct:2.56,cash:1842.35}
+  {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,cash:1842.35}
  ],
  events:[{id:"e-001",date:"09.10.2026",ticker:"YDEX",title:"Проверить причины резкого движения цены",impact:"uncertain",priority:"high",status:"needs_verification",summary:"Цена заметно снизилась относительно предыдущего снимка. Причина движения не подтверждена внутри журнала; необходима проверка первичных источников.",sourceUrl:"",decision:"Новые покупки отложены до проверки причин и риска концентрации.",decisionDate:"09.10.2026"}],
  radar:[
@@ -35,5 +34,6 @@ window.RAZGON_DATA={
   {id:2,date:"10.10.2026",ticker:"VKCO",side:"SELL",qty:5,price:123.95,grossProfit:15.25,commission:1.86,netProfit:13.39},
   {id:3,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07}
  ],
+ accountScope:"Только брокерский счёт; инвесткопилка исключена",
  weekAudit:{period:"05–11.10.2026",status:"Предварительно",notes:"Включены подтверждённые продажи ВТБ, VK и Роснефти. Комиссия Роснефти 5,68 ₽ показана рядом с операцией, но требует сверки; другие расходы, налоги и операции могут изменить результат."}
 };
