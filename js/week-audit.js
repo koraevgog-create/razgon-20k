@@ -8,6 +8,26 @@
  const discrepancy=D.portfolio.brokerage-D.portfolio.cash-visiblePositionTotal;
  const percent=net/D.week.target*100;
  function updateText(selector,text){document.querySelectorAll(selector).forEach(x=>x.textContent=text)}
+ function syncLegacy(){
+  const fmt=n=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:2,minimumFractionDigits:2});
+  const p=percent.toFixed(2).replace('.',',')+'%';
+  const text=(sel,v)=>document.querySelectorAll(sel).forEach(e=>e.textContent=v);
+  text('.ringCore .money',fmt(net)+' ₽');document.querySelectorAll('.ringCore .money').forEach(e=>e.classList.remove('counter'));
+  text('.ringCore .percent',p+' · ПРЕДВАРИТЕЛЬНО');
+  const ring=document.getElementById('ring');if(ring)ring.style.setProperty('--progress',Math.min(100,percent)+'%');
+  text('.floatChip.one',signed(net)+' по подтверждённым продажам');
+  text('.heroMeta>div:nth-child(3) b',String(D.trades.length));
+  text('.heroMeta>div:nth-child(3) span','ПОДТВЕРЖДЁННЫЕ ПРОДАЖИ');
+  const heads=[...document.querySelectorAll('.sectionHead')];heads.forEach(h=>{if(h.querySelector('h2')?.textContent==='Прогресс недели'){const sub=h.querySelector('p');if(sub)sub.textContent=fmt(net)+' / '+fmt(D.week.target)+' ₽'}});
+  const prog=document.querySelector('#weekbar');if(prog)prog.style.width=Math.min(100,percent)+'%';
+  const mode=document.getElementById('modeContent');if(mode){const goal=mode.querySelector('.decision');if(goal&&goal.textContent.includes('40,11'))goal.innerHTML=fmt(net)+' <span style="color:#657080">/ 500 ₽</span>';const sub=mode.querySelector('.decisionSub');if(sub&&sub.textContent.includes('8,02%'))sub.textContent=p+' выполнено · до цели '+rub(D.week.target-net);}
+  text('.capitalCore b',rub(D.portfolio.total,0));text('.flowOrb b',rub(D.portfolio.total,0));
+  text('.satellite.sat1 b',signed(D.portfolio.pnl));text('.satellite.sat2 b',signed(net));text('.satellite.sat3 b',rub(D.portfolio.cash));
+  text('.flowMetric.fm1 b',signed(D.portfolio.pnl));text('.flowMetric.fm2 b',signed(net));text('.flowMetric.fm3 b',rub(D.portfolio.cash));text('.flowMetric.fm4 b',p);
+  text('.runwayStats .runwayStat:first-child b',rub(D.portfolio.total,0));
+  const tickers=document.querySelectorAll('.systemTicker .tickerInner');tickers.forEach(t=>{t.querySelectorAll('span').forEach(sp=>{const v=sp.textContent.trim();if(v.startsWith('WEEK'))sp.innerHTML='<b>WEEK</b> '+fmt(net)+' / 500 ₽';else if(v.startsWith('DAY'))sp.innerHTML='<b>DAY</b> 7 / 7';else if(v.startsWith('REALIZED'))sp.innerHTML='<b>REALIZED</b> <i class="up">'+signed(net)+'</i>';else if(v.startsWith('CASH'))sp.innerHTML='<b>CASH</b> '+rub(D.portfolio.cash)})});
+  const info=document.querySelector('.constInfo');if(info)info.setAttribute('data-snapshot',D.meta.updated);
+ }
  function init(){
   updateText('.commandStrip .cmd:nth-child(1) span[style]', 'BUILD '+D.meta.build);
   document.querySelectorAll('.commandStrip .cmd:nth-child(3)').forEach(x=>x.innerHTML='<div><span>НЕДЕЛЯ 05–11.10</span><br><strong>'+rub(net)+' / '+rub(D.week.target,0)+'</strong><br><span>ПРЕДВАРИТЕЛЬНЫЙ ИТОГ · 7/7</span></div><b>'+percent.toFixed(1).replace('.',',')+'%</b>');
@@ -22,6 +42,7 @@
   document.querySelectorAll('.weekCycle .archiveRow small').forEach(x=>x.textContent='05–11 октября · предварительный итог');
   document.querySelectorAll('.weekCycle .archiveEmpty').forEach(x=>x.textContent='Сумма рассчитана по видимым закрытым сделкам. Для окончательного недельного результата нужны все комиссии, налоги и движения средств за период.');
   document.querySelectorAll('.weekCycle .sectionHead h2').forEach(x=>x.textContent='Неделя №1 · 7 из 7 дней');
+  syncLegacy();
   const host=document.querySelector('.commandStrip');if(!host)return;
   const card=document.createElement('section');card.className='weekAuditPanel';card.setAttribute('aria-label','Итоги недели');
   card.innerHTML='<div class="weekAuditHeading"><div><div class="eyebrow">WEEK 01 · 05–11 ОКТЯБРЯ 2026</div><h2>Итоги недели <small>предварительная сверка</small></h2></div><a href="trades.html">Журнал сделок →</a></div><div class="weekAuditGrid"><div><span>Продажи · валовый результат</span><b>'+signed(gross)+'</b></div><div><span>Комиссии, учтённые по продажам</span><b>−'+rub(fees)+'</b></div><div><span>Результат закрытых сделок*</span><b class="weekAuditAccent">'+signed(net)+'</b></div><div><span>Цель 500 ₽</span><b>'+percent.toFixed(2).replace('.',',')+'%</b></div><div><span>Общий P&L брокера · всё время</span><b>'+signed(D.portfolio.pnl)+'</b></div><div><span>Стоимость всех счетов</span><b>'+rub(D.portfolio.total)+'</b></div></div><div class="weekAuditProgress"><i style="width:'+Math.min(100,percent)+'%"></i></div><p>*Расчёт только по видимым закрытым сделкам. Дополнительные комиссии, пополнения и прочие операции могут менять полный недельный итог. Изменение стоимости портфеля не равно доходу за неделю.</p><p>Сверка позиций: сумма показанных активов и свободных денег отличается от брокерского итога на '+signed(discrepancy)+'. Это расхождение оставлено видимым, а не скрыто подгонкой данных.</p>';
