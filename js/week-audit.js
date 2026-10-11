@@ -14,7 +14,7 @@
   const text=(sel,v)=>document.querySelectorAll(sel).forEach(e=>e.textContent=v);
   text('.ringCore .money',fmt(net)+' ₽');document.querySelectorAll('.ringCore .money').forEach(e=>e.classList.remove('counter'));
   text('.ringCore .percent',p+' · ПРЕДВАРИТЕЛЬНО');
-  const ring=document.getElementById('ring');if(ring)ring.style.setProperty('--progress',Math.min(100,percent)+'%');
+  const ring=document.getElementById('ring');if(ring){const progress=Math.max(0,Math.min(100,percent));ring.style.setProperty('--progress',progress+'%');ring.style.setProperty('--needle-angle',(progress*3.6)+'deg');ring.style.setProperty('--gauge-color',progress<30?'#fa5367':progress<70?'#f5bd47':'#93e64e');ring.setAttribute('aria-label','Прогресс недели: '+p+' из цели 500 ₽');}
   text('.floatChip.one',signed(net)+' по подтверждённым продажам');
   text('.heroMeta>div:nth-child(3) b',String(D.trades.length));
   text('.heroMeta>div:nth-child(3) span','ПОДТВЕРЖДЁННЫЕ ПРОДАЖИ');
