@@ -1,6 +1,6 @@
 window.RAZGON_DATA={
- meta:{build:"004.23",level:"07",updated:"11.10.2026 14:21 · данные пользователя"},
- portfolio:{total:20915.89,brokerage:20915.89,contributed:19900,cash:1842.35,cashAsOf:"11.10.2026 12:37 · требует обновления",pnl:1015.89,pnlPct:5.1},
+ meta:{build:"004.24",level:"07",updated:"11.10.2026 14:21 · данные пользователя"},
+ portfolio:{total:20915.89,brokerage:20915.89,contributed:19900,cash:1842.35,cashAsOf:"11.10.2026 12:37 · требует обновления",pnl:1015.89,pnlPct:5.1,brokerOpenPositionsPct:2.38},
  week:{number:1,day:7,target:500,realized:403.57},
  positions:[
   {ticker:"YDEX",name:"Яндекс",qty:2,price:3385.5,value:6771,pnl:-125.5,pnlPct:-1.83},
@@ -12,10 +12,10 @@ window.RAZGON_DATA={
   {ticker:"ARLIFT",name:"Арлифт 001Р-01 · облигация",qty:1,price:854.08,value:854.08,pnl:12.8,pnlPct:1.52}
  ],
  extras:[
-  {ticker:"ROSN_GIFT",name:"Роснефть · подарок",qty:null,price:null,value:155.18,pnl:33.87,pnlPct:27.91}
+  {ticker:"ROSN_GIFT",name:"Роснефть · подарок · входит в баланс, не отдельный доход",qty:null,price:null,value:155.18,pnl:33.87,pnlPct:27.91}
  ],
  snapshots:[
-  {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,cash:null}
+  {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,brokerOpenPositionsPct:2.38,cash:null}
  ],
  events:[{id:"e-001",date:"09.10.2026",ticker:"YDEX",title:"Проверить причины резкого движения цены",impact:"uncertain",priority:"high",status:"needs_verification",summary:"Цена заметно снизилась относительно предыдущего снимка. Причина движения не подтверждена внутри журнала; необходима проверка первичных источников.",sourceUrl:"",decision:"Новые покупки отложены до проверки причин и риска концентрации.",decisionDate:"09.10.2026"}],
  radar:[
@@ -32,5 +32,6 @@ window.RAZGON_DATA={
   {id:3,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07}
  ],
  accountScope:"Только брокерский счёт",
+ accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"Стоимость подарка включена в общий баланс, отдельно к прибыли не прибавлять",withdrawalsKnown:0,withdrawalsConfirmed:false},
  weekAudit:{period:"05–11.10.2026",status:"Предварительно",notes:"Включены подтверждённые продажи ВТБ, VK и Роснефти. Комиссия Роснефти 5,68 ₽ показана рядом с операцией, но требует сверки; другие расходы, налоги и операции могут изменить результат."}
 };
