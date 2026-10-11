@@ -1,6 +1,6 @@
 window.RAZGON_DATA={
  meta:{build:"004.23",level:"07",updated:"11.10.2026 14:21 · данные пользователя"},
- portfolio:{total:20915.89,brokerage:20915.89,savings:0,contributed:19900,cash:1842.35,cashAsOf:"11.10.2026 12:37 · требует обновления",pnl:1015.89,pnlPct:5.1},
+ portfolio:{total:20915.89,brokerage:20915.89,contributed:19900,cash:1842.35,cashAsOf:"11.10.2026 12:37 · требует обновления",pnl:1015.89,pnlPct:5.1},
  week:{number:1,day:7,target:500,realized:403.57},
  positions:[
   {ticker:"YDEX",name:"Яндекс",qty:2,price:3385.5,value:6771,pnl:-125.5,pnlPct:-1.83},
@@ -31,6 +31,6 @@ window.RAZGON_DATA={
   {id:2,date:"10.10.2026",ticker:"VKCO",side:"SELL",qty:5,price:123.95,grossProfit:15.25,commission:1.86,netProfit:13.39},
   {id:3,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07}
  ],
- accountScope:"Только брокерский счёт; инвесткопилка исключена",
+ accountScope:"Только брокерский счёт",
  weekAudit:{period:"05–11.10.2026",status:"Предварительно",notes:"Включены подтверждённые продажи ВТБ, VK и Роснефти. Комиссия Роснефти 5,68 ₽ показана рядом с операцией, но требует сверки; другие расходы, налоги и операции могут изменить результат."}
 };
