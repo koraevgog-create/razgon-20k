@@ -1,2 +1,28 @@
 /* BUILD 004.20 */
 .weekAuditPanel{margin:18px 0 30px;padding:22px;border:1px solid rgba(201,255,74,.19);background:linear-gradient(135deg,#141b1c,#0b1015);border-radius:20px}.weekAuditHeading{display:flex;justify-content:space-between;align-items:center;gap:12px}.weekAuditHeading h2{font-size:clamp(20px,2.4vw,27px);margin:8px 0 17px}.weekAuditHeading h2 small{font-size:12px;font-weight:500;color:#9eabba}.weekAuditHeading a{font-size:12px;color:var(--lime);text-decoration:none}.weekAuditGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.weekAuditGrid>div{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025)}.weekAuditGrid span{display:block;color:#9ba7b6;font-size:11px;margin-bottom:9px}.weekAuditGrid b{font-size:clamp(15px,2vw,21px);font-variant-numeric:tabular-nums}.weekAuditAccent{color:var(--lime)}.weekAuditProgress{height:8px;margin:16px 0;background:#2b3138;border-radius:50px;overflow:hidden}.weekAuditProgress i{display:block;height:100%;background:var(--lime);border-radius:50px}.weekAuditPanel p{font-size:11px;color:#a5b0bd;line-height:1.65;margin:8px 0 0}@media(max-width:700px){.weekAuditGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.weekAuditPanel{padding:14px}.weekAuditHeading{align-items:flex-start}}
+/* BUILD 004.22 — permanently visible red/yellow/green speedometer */
+.ring#ring{
+ --needle-angle:0deg;
+ background:conic-gradient(from 0deg,
+ #fa5367 0deg 108deg,
+ #f5bd47 108deg 252deg,
+ #93e64e 252deg 360deg);
+ box-shadow:0 0 80px rgba(0,0,0,.5),inset 0 0 26px rgba(255,255,255,.07);
+}
+.ring#ring::before{inset:22px;background:#0b0d12;border:1px solid rgba(255,255,255,.12)}
+.ring#ring .speedNeedle{
+ position:absolute;inset:0;border-radius:50%;z-index:3;pointer-events:none;
+ transform:rotate(var(--needle-angle));transition:transform 1.2s cubic-bezier(.22,1,.36,1);
+}
+.ring#ring .speedNeedle::before{
+ content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);
+ width:7px;height:31px;border-radius:7px;background:#f7faff;
+ box-shadow:0 0 0 3px #0b0d12,0 0 15px rgba(255,255,255,.9);
+}
+.ring#ring .speedNeedle::after{
+ content:"";position:absolute;top:34px;left:50%;transform:translateX(-50%);
+ width:2px;height:15px;background:linear-gradient(#eaf1ff,transparent);
+}
+.ring#ring .ringCore .percent{color:var(--gauge-color,#93e64e)}
+.ring#ring .ringCore .money{color:var(--gauge-color,#93e64e)}
+@media(prefers-reduced-motion:reduce){.ring#ring .speedNeedle{transition:none}}
