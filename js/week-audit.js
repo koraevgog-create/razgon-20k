@@ -11,6 +11,8 @@
  function init(){
   updateText('.commandStrip .cmd:nth-child(1) span[style]', 'BUILD '+D.meta.build);
   document.querySelectorAll('.commandStrip .cmd:nth-child(3)').forEach(x=>x.innerHTML='<div><span>НЕДЕЛЯ 05–11.10</span><br><strong>'+rub(net)+' / '+rub(D.week.target,0)+'</strong><br><span>ПРЕДВАРИТЕЛЬНЫЙ ИТОГ · 7/7</span></div><b>'+percent.toFixed(1).replace('.',',')+'%</b>');
+  const bar=document.getElementById('weekbar');if(bar)bar.style.width=Math.min(100,percent)+'%';
+  document.querySelectorAll('[data-live="week-progress"]').forEach(x=>x.textContent=percent.toFixed(2).replace('.',',')+'%');
   updateText('#analyticsUpdated','Снимок '+D.meta.updated+' · данные вручную');
   document.querySelectorAll('.weekCycle .weekValue').forEach(x=>x.innerHTML=rub(net)+' <span>/ '+rub(D.week.target,0)+'</span>');
   document.querySelectorAll('.weekCycle .weekTop .mini').forEach(x=>x.textContent='Предварительно: '+percent.toFixed(2).replace('.',',')+'% цели · осталось '+rub(D.week.target-net));
