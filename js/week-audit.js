@@ -1,57 +1,50 @@
-/* BUILD 004.20 — end-of-week audit, values from user screenshots; no live feed */
+/* BUILD 004.27 — single source of truth for weekly figures and account balance. */
 (function(){
- const D=window.RAZGON_DATA;if(!D)return;
- const rub=(n,d=2)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽';
- const signed=n=>(n>=0?'+':'−')+rub(Math.abs(n));
- const gross=D.trades.reduce((s,x)=>s+x.grossProfit,0),fees=D.trades.reduce((s,x)=>s+x.commission,0),net=gross-fees;
- const visiblePositionTotal=D.positions.reduce((s,x)=>s+x.value,0)+D.extras.filter(x=>x.ticker==='ROSN_GIFT').reduce((s,x)=>s+x.value,0);
- const discrepancy=D.portfolio.brokerage-D.portfolio.cash-visiblePositionTotal;
- const percent=net/D.week.target*100;
- function updateText(selector,text){document.querySelectorAll(selector).forEach(x=>x.textContent=text)}
- function syncLegacy(){
-  const fmt=n=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:2,minimumFractionDigits:2});
-  const p=percent.toFixed(2).replace('.',',')+'%';
-  const text=(sel,v)=>document.querySelectorAll(sel).forEach(e=>e.textContent=v);
-  text('.ringCore .money',fmt(net)+' ₽');document.querySelectorAll('.ringCore .money').forEach(e=>e.classList.remove('counter'));
-  text('.ringCore .percent',p+' · ПРЕДВАРИТЕЛЬНО');
-  const ring=document.getElementById('ring');if(ring){const progress=Math.max(0,Math.min(100,percent));ring.style.setProperty('--progress',progress+'%');ring.style.setProperty('--needle-angle',(progress*3.6)+'deg');ring.style.setProperty('--gauge-color',progress<30?'#fa5367':progress<70?'#f5bd47':'#93e64e');ring.setAttribute('aria-label','Прогресс недели: '+p+' из цели 500 ₽');}
-  text('.floatChip.one',signed(net)+' по подтверждённым продажам');
-  text('.heroMeta>div:nth-child(3) b',String(D.trades.length));
-  text('.heroMeta>div:nth-child(3) span','ПОДТВЕРЖДЁННЫЕ ПРОДАЖИ');
-  const heads=[...document.querySelectorAll('.sectionHead')];heads.forEach(h=>{if(h.querySelector('h2')?.textContent==='Прогресс недели'){const sub=h.querySelector('p');if(sub)sub.textContent=fmt(net)+' / '+fmt(D.week.target)+' ₽'}});
-  const prog=document.querySelector('#weekbar');if(prog)prog.style.width=Math.min(100,percent)+'%';
-  const mode=document.getElementById('modeContent');if(mode){const goal=mode.querySelector('.decision');if(goal&&goal.textContent.includes('403,57'))goal.innerHTML=fmt(net)+' <span style="color:#657080">/ 500 ₽</span>';const sub=mode.querySelector('.decisionSub');if(sub&&sub.textContent.includes('80,71%'))sub.textContent=p+' выполнено · до цели '+rub(D.week.target-net);}
-  text('.capitalCore b',rub(D.portfolio.total,0));text('.flowOrb b',rub(D.portfolio.total,0));
-  text('.satellite.sat1 b',signed(D.portfolio.pnl));text('.satellite.sat2 b',signed(net));text('.satellite.sat3 b','уточняется');
-  text('.flowMetric.fm1 b',signed(D.portfolio.pnl));text('.flowMetric.fm2 b',signed(net));text('.flowMetric.fm3 b','уточняется');text('.flowMetric.fm4 b',p);
-  text('.runwayStats .runwayStat:first-child b',rub(D.portfolio.total,0));
-  const rw=document.querySelector('.runwayTop h3');if(rw)rw.textContent=rub(D.portfolio.contributed,0)+' → '+rub(D.portfolio.total,0);
-  const rp=document.querySelector('.runwayTop .mini');if(rp)rp.textContent='+'+D.portfolio.pnlPct.toFixed(2).replace('.',',')+'% к внесённым средствам';
-  const tickers=document.querySelectorAll('.systemTicker .tickerInner');tickers.forEach(t=>{t.querySelectorAll('span').forEach(sp=>{const v=sp.textContent.trim();if(v.startsWith('WEEK'))sp.innerHTML='<b>WEEK</b> '+fmt(net)+' / 500 ₽';else if(v.startsWith('DAY'))sp.innerHTML='<b>DAY</b> 7 / 7';else if(v.startsWith('REALIZED'))sp.innerHTML='<b>REALIZED</b> <i class="up">'+signed(net)+'</i>';else if(v.startsWith('CASH'))sp.innerHTML='<b>CASH</b> '+rub(D.portfolio.cash)})});
-  document.querySelectorAll('.card').forEach(c=>{const label=c.querySelector('.label')?.textContent?.trim();const value=c.querySelector('.value');if(!value)return;if(label==='Стоимость')value.textContent=rub(D.portfolio.total);if(label==='Общий результат')value.textContent=signed(D.portfolio.pnl);if(label==='Свободный кэш')c.querySelector('.mini')&&(c.querySelector('.mini').textContent='последний известный снимок, требует сверки')});
-  document.querySelectorAll('.card').forEach(c=>{if(c.querySelector('.label')?.textContent?.trim()==='Свободный кэш'){const v=c.querySelector('.value');if(v)v.textContent='уточняется';}});
-  const info=document.querySelector('.constInfo');if(info)info.setAttribute('data-snapshot',D.meta.updated);
+'use strict';
+const D=window.RAZGON_DATA;if(!D)return;
+const fmt=(n,d=2)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽';
+const signed=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
+const weeks=[{number:1,from:5,to:11,period:'05–11 октября 2026'},{number:2,from:12,to:18,period:'12–18 октября 2026'}];
+const calc=w=>{const rows=D.trades.filter(t=>{const m=t.date.match(/^(\d{2})\.10\.2026$/);return m&&+m[1]>=w.from&&+m[1]<=w.to});const gross=rows.reduce((s,t)=>s+t.grossProfit,0),fees=rows.reduce((s,t)=>s+t.commission,0);return {...w,rows,gross,fees,net:Math.round((gross-fees)*100)/100}};
+const history=weeks.map(calc),current=history.find(w=>w.number===D.week.number)||history[history.length-1],previous=history.filter(w=>w.number<current.number);
+const target=D.week.target,progress=current.net/target*100,progressLabel=progress.toFixed(2).replace('.',',')+'%',day=D.week.day;
+const set=(sel,v)=>document.querySelectorAll(sel).forEach(x=>x.textContent=v);
+const money=fmt(current.net),total=fmt(D.portfolio.total),cash=fmt(D.portfolio.cash);
+function render(){
+ set('.commandStrip .cmd:first-child span[style]','BUILD '+D.meta.build);
+ document.querySelectorAll('.commandStrip .cmd:nth-child(3)').forEach(x=>{x.innerHTML='<div><span>НЕДЕЛЯ №'+current.number+' · 12–18.10</span><br><strong>'+money+' / '+fmt(target,0)+'</strong><br><span>ПРОМЕЖУТОЧНО · ДЕНЬ '+day+'/7</span></div><b>'+progress.toFixed(1).replace('.',',')+'%</b>'});
+ document.querySelectorAll('.ringCore .money').forEach(x=>{x.classList.remove('counter');x.textContent=money});
+ set('.ringCore .percent',progressLabel+' · ПРОМЕЖУТОЧНО');
+ const ring=document.getElementById('ring');if(ring){const p=Math.max(0,Math.min(100,progress));ring.style.setProperty('--progress',p+'%');ring.style.setProperty('--needle-angle',p*3.6+'deg');ring.style.setProperty('--gauge-color',p<30?'#fa5367':p<70?'#f5bd47':'#93e64e');ring.setAttribute('aria-label','Неделя '+current.number+': '+progressLabel+' от цели')};
+ set('.floatChip.one',signed(current.net)+' по продажам этой недели');
+ set('.heroMeta>div:nth-child(3) b',String(current.rows.length));
+ set('.heroMeta>div:nth-child(3) span','ПРОДАЖИ ЭТОЙ НЕДЕЛИ');
+ set('[data-live="week-progress"]',progressLabel);
+ const bar=document.getElementById('weekbar');if(bar)bar.style.width=Math.max(0,Math.min(100,progress))+'%';
+ document.querySelectorAll('.sectionHead').forEach(h=>{if(h.querySelector('h2')?.textContent==='Прогресс недели'){const p=h.querySelector('p');if(p)p.textContent=money+' / '+fmt(target)}});
+ set('#analyticsUpdated','Снимок '+D.meta.updated+' · вручную');
+ set('.capitalCore b',fmt(D.portfolio.total,0));set('.flowOrb b',fmt(D.portfolio.total,0));
+ set('.satellite.sat1 b',signed(D.portfolio.pnl));set('.satellite.sat2 b',signed(current.net));set('.satellite.sat3 b',cash);
+ set('.flowMetric.fm1 b',signed(D.portfolio.pnl));set('.flowMetric.fm2 b',signed(current.net));set('.flowMetric.fm3 b',cash);set('.flowMetric.fm4 b',progressLabel);
+ set('.runwayStats .runwayStat:first-child b',fmt(D.portfolio.total,0));
+ const rw=document.querySelector('.runwayTop h3');if(rw)rw.textContent=fmt(D.portfolio.contributed,0)+' → '+total;
+ const rp=document.querySelector('.runwayTop .mini');if(rp)rp.textContent='+'+D.portfolio.pnlPct.toFixed(2).replace('.',',')+'% к взносам';
+ document.querySelectorAll('.systemTicker .tickerInner span').forEach(x=>{const v=x.textContent.trim();if(v.startsWith('WEEK'))x.innerHTML='<b>WEEK</b> '+money+' / '+fmt(target,0);else if(v.startsWith('DAY'))x.innerHTML='<b>DAY</b> '+day+' / 7';else if(v.startsWith('REALIZED'))x.innerHTML='<b>REALIZED</b> '+signed(current.net);else if(v.startsWith('CASH'))x.innerHTML='<b>CASH</b> '+cash});
+ document.querySelectorAll('.card').forEach(c=>{const label=c.querySelector('.label')?.textContent.trim(),v=c.querySelector('.value');if(!v)return;if(label==='Стоимость')v.textContent=total;else if(label==='Общий результат')v.textContent=signed(D.portfolio.pnl);else if(label==='Реализовано')v.textContent=signed(current.net);else if(label==='Свободный кэш')v.textContent=cash});
+ const hero=document.querySelector('.heroMeta>div:nth-child(2) b');if(hero)hero.textContent='+'+D.portfolio.pnlPct.toFixed(2).replace('.',',')+'%';
+ const mode=document.getElementById('modeContent');if(mode){const a=mode.querySelector('.decision');if(a)a.innerHTML=money+' <span style="color:#657080">/ '+fmt(target,0)+'</span>';const b=mode.querySelector('.decisionSub');if(b)b.textContent=progressLabel+' цели · '+(current.net>=target?'цель достигнута':'осталось '+fmt(target-current.net))};
+ const cycle=document.querySelector('.weekCycle');if(cycle){
+ const head=cycle.querySelector('.sectionHead h2');if(head)head.textContent='Неделя №'+current.number+' · день '+day+' из 7';
+ const sub=cycle.querySelector('.sectionHead>p');if(sub)sub.textContent=current.period;
+ const val=cycle.querySelector('.weekValue');if(val)val.innerHTML=money+' <span>/ '+fmt(target,0)+'</span>';
+ const mini=cycle.querySelector('.weekTop .mini');if(mini)mini.textContent=progressLabel+' цели · '+(current.net>=target?'цель достигнута':'осталось '+fmt(target-current.net));
+ const state=cycle.querySelector('.weekTop .state');if(state)state.textContent='ПРОМЕЖУТОЧНО';
+ const track=cycle.querySelector('.weekTrack i');if(track)track.style.width=Math.max(0,Math.min(100,progress))+'%';
+ const days=cycle.querySelector('.days');if(days){const names=['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];days.innerHTML=names.map((n,i)=>'<div class="day '+(i+1<day?'done':i+1===day?'today':'')+'">'+n+'<br>'+(current.from+i)+'</div>').join('')}
+ const archive=cycle.querySelector('.weekArchive');if(archive){archive.innerHTML='<div class="label">ИСТОРИЯ НЕДЕЛЬ</div><h3>Завершённые недели</h3>'+previous.map(w=>'<div class="archiveRow"><div><b>Неделя №'+w.number+'</b><small>'+w.period+' · предварительно</small></div><div class="archiveScore">'+fmt(w.net)+'<em>'+(w.net/target*100).toFixed(2).replace('.',',')+'%</em></div></div>').join('')};
  }
- function init(){
-  updateText('.commandStrip .cmd:nth-child(1) span[style]', 'BUILD '+D.meta.build);
-  document.querySelectorAll('.commandStrip .cmd:nth-child(3)').forEach(x=>x.innerHTML='<div><span>НЕДЕЛЯ 05–11.10</span><br><strong>'+rub(net)+' / '+rub(D.week.target,0)+'</strong><br><span>ПРЕДВАРИТЕЛЬНЫЙ ИТОГ · 7/7</span></div><b>'+percent.toFixed(1).replace('.',',')+'%</b>');
-  const bar=document.getElementById('weekbar');if(bar)bar.style.width=Math.min(100,percent)+'%';
-  document.querySelectorAll('[data-live="week-progress"]').forEach(x=>x.textContent=percent.toFixed(2).replace('.',',')+'%');
-  updateText('#analyticsUpdated','Снимок '+D.meta.updated+' · данные вручную');
-  document.querySelectorAll('.weekCycle .weekValue').forEach(x=>x.innerHTML=rub(net)+' <span>/ '+rub(D.week.target,0)+'</span>');
-  document.querySelectorAll('.weekCycle .weekTop .mini').forEach(x=>x.textContent='Предварительно: '+percent.toFixed(2).replace('.',',')+'% цели · осталось '+rub(D.week.target-net));
-  document.querySelectorAll('.weekCycle .weekTop .state').forEach(x=>x.textContent='СВЕРКА');
-  document.querySelectorAll('.weekCycle .weekTrack i').forEach(x=>x.style.width=Math.max(0,Math.min(100,percent))+'%');
-  document.querySelectorAll('.weekCycle .archiveScore').forEach(x=>x.innerHTML=rub(net)+'<em>'+percent.toFixed(2).replace('.',',')+'%</em>');
-  document.querySelectorAll('.weekCycle .archiveRow small').forEach(x=>x.textContent='05–11 октября · предварительный итог');
-  document.querySelectorAll('.weekCycle .archiveEmpty').forEach(x=>x.textContent='Сумма рассчитана по видимым закрытым сделкам. Для окончательного недельного результата нужны все комиссии, налоги и движения средств за период.');
-  document.querySelectorAll('.weekCycle .sectionHead h2').forEach(x=>x.textContent='Неделя №1 · 7 из 7 дней');
-  syncLegacy();
-  const host=document.querySelector('.commandStrip');if(!host)return;
-  const card=document.createElement('section');card.className='weekAuditPanel';card.setAttribute('aria-label','Итоги недели');
-  card.innerHTML='<div class="weekAuditHeading"><div><div class="eyebrow">WEEK 01 · 05–11 ОКТЯБРЯ 2026</div><h2>Итоги недели <small>предварительная сверка</small></h2></div><a href="trades.html">Журнал сделок →</a></div><div class="weekAuditGrid"><div><span>Продажи · валовый результат</span><b>'+signed(gross)+'</b></div><div><span>Комиссии, учтённые по продажам</span><b>−'+rub(fees)+'</b></div><div><span>Результат закрытых сделок*</span><b class="weekAuditAccent">'+signed(net)+'</b></div><div><span>Цель 500 ₽</span><b>'+percent.toFixed(2).replace('.',',')+'%</b></div><div><span>Результат к взносам · брокерский счёт</span><b>'+signed(D.portfolio.pnl)+'</b></div><div><span>Стоимость брокерского счёта</span><b>'+rub(D.portfolio.total)+'</b></div></div><div class="weekAuditProgress"><i style="width:'+Math.min(100,percent)+'%"></i></div><p>*Расчёт только по видимым закрытым сделкам. Дополнительные комиссии, пополнения и прочие операции могут менять полный недельный итог. Изменение стоимости портфеля не равно доходу за неделю.</p><p>Сверка позиций: данные по позициям и свободному кэшу взяты из более раннего снимка и отличаются от нового брокерского итога на '+signed(discrepancy)+'. Это расхождение оставлено видимым, а не скрыто подгонкой данных.</p>';
-  host.insertAdjacentElement('afterend',card);
-  const sections=document.querySelectorAll('.cards');sections.forEach(x=>{if(x.closest('.section')?.querySelector('h2')?.textContent==='Пульс портфеля'){const vals=x.querySelectorAll('.card .value');if(vals[0])vals[0].textContent=rub(D.portfolio.total);if(vals[1])vals[1].textContent=signed(D.portfolio.pnl);if(vals[2])vals[2].textContent=signed(net);if(vals[3])vals[3].textContent='уточняется'}});
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ const host=document.querySelector('.commandStrip');if(host){document.querySelectorAll('.weekAuditPanel').forEach(x=>x.remove());const panel=document.createElement('section');panel.className='weekAuditPanel';panel.innerHTML='<div class="weekAuditHeading"><div><div class="eyebrow">WEEK 0'+current.number+' · '+current.period.toUpperCase()+'</div><h2>Текущая неделя <small>промежуточный результат</small></h2></div><a href="trades.html">Журнал сделок →</a></div><div class="weekAuditGrid"><div><span>Прибыль продаж до комиссий</span><b>'+signed(current.gross)+'</b></div><div><span>Комиссии продаж</span><b>−'+fmt(current.fees)+'</b></div><div><span>После комиссий продаж</span><b class="weekAuditAccent">'+signed(current.net)+'</b></div><div><span>Цель недели</span><b>'+progressLabel+'</b></div><div><span>Прирост счёта к взносам</span><b>'+signed(D.portfolio.pnl)+'</b></div><div><span>Брокерский счёт</span><b>'+total+'</b></div></div><div class="weekAuditProgress"><i style="width:'+Math.max(0,Math.min(100,progress))+'%"></i></div><p>Промежуточно: комиссии покупок Озона и Ростелекома (12,88 ₽) не включены в результат продаж. Подарочная Роснефть (154,76 ₽) не считается личным взносом или торговой прибылью.</p>';host.insertAdjacentElement('afterend',panel)}
+ const pulse=[...document.querySelectorAll('.section')].find(s=>s.querySelector('.sectionHead h2')?.textContent==='Пульс портфеля');if(pulse){const v=pulse.querySelectorAll('.cards .card .value');if(v[0])v[0].textContent=total;if(v[1])v[1].textContent=signed(D.portfolio.pnl);if(v[2])v[2].textContent=signed(current.net);if(v[3])v[3].textContent=cash}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
