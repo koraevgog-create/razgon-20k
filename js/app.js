@@ -4,7 +4,7 @@ const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.tar
 document.querySelectorAll('.counter').forEach(el=>{let done=false;const o=new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;let to=+el.dataset.to,dec=+(el.dataset.decimals||0),suf=el.dataset.suffix||'',start=performance.now();function tick(t){let q=Math.min((t-start)/1200,1),v=to*(1-Math.pow(1-q,3));el.textContent=v.toLocaleString('ru-RU',{minimumFractionDigits:dec,maximumFractionDigits:dec})+suf;if(q<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}});o.observe(el)});
 document.querySelectorAll('.tilt').forEach(c=>{let raf=0,px=0,py=0;c.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;if(raf)return;raf=requestAnimationFrame(()=>{let r=c.getBoundingClientRect(),x=px-r.left,y=py-r.top;c.style.setProperty('--cx',x+'px');c.style.setProperty('--cy',y+'px');let rx=(y/r.height-.5)*-5,ry=(x/r.width-.5)*7;c.style.transform='perspective(700px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY(-3px)';raf=0})},{passive:true});c.addEventListener('pointerleave',()=>c.style.transform='')});
 
-setTimeout(()=>{const b=document.getElementById('weekbar');if(b)b.style.width='80.71%'},700);
+setTimeout(()=>{const b=document.getElementById('weekbar');if(b)b.style.width=Math.min(100,window.RAZGON_DATA?.week?.realized/window.RAZGON_DATA?.week?.target*100||0)+'%'},700);
 function clock(){const d=new Date(),p=n=>String(n).padStart(2,'0'),el=document.getElementById('marketClock');if(el)el.textContent=p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' · '+p(d.getHours())+':'+p(d.getMinutes())}clock();setInterval(clock,30000);
 
 const panels={
@@ -17,7 +17,7 @@ document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setMode(b.dataset.mo
 
 const scene=document.querySelector('.capitalScene'),coords=document.getElementById('sceneCoords');if(scene&&coords){scene.addEventListener('pointermove',e=>{const r=scene.getBoundingClientRect(),x=Math.round((e.clientX-r.left)/r.width*100),y=Math.round((e.clientY-r.top)/r.height*100);coords.textContent='X '+String(x).padStart(3,'0')+' · Y '+String(y).padStart(3,'0');scene.style.setProperty('--sx',x+'%');scene.style.setProperty('--sy',y+'%')})}
 
-const infoMap={capital:['Весь портфель','≈20 916 ₽','Центральное ядро эксперимента. Все позиции связаны с общим капиталом.'],yandex:['Яндекс','2 акции · ≈32%','Крупнейшая позиция. Высокая концентрация — новые покупки требуют особенно сильного основания.'],rosneft:['Роснефть','10 акций · ≈18%','Вторая крупнейшая позиция и заметная нефтяная экспозиция.'],sber:['Сбербанк-п','15 акций · ≈20%','Крупная базовая позиция портфеля.'],t:['Ростелеком','30 акций · ≈6%','Активная зона наблюдения: возможна частичная работа с импульсом.'],vk:['VK','5 акций · ≈3%','Небольшая спекулятивная позиция.'],vtb:['ВТБ','20 акций · ≈5%','Часть прибыли уже зафиксирована в сделке №1.']};
+const infoMap={capital:['Весь портфель','≈21 307 ₽','Центральное ядро эксперимента. Все позиции связаны с общим капиталом.'],yandex:['Яндекс','2 акции · ≈32%','Крупнейшая позиция. Высокая концентрация — новые покупки требуют особенно сильного основания.'],rosneft:['Роснефть','позиция закрыта','Вторая крупнейшая позиция и заметная нефтяная экспозиция.'],sber:['Сбербанк-п','позиция закрыта','Крупная базовая позиция портфеля.'],t:['Ростелеком','50 акций','Активная зона наблюдения: возможна частичная работа с импульсом.'],vk:['VK','позиция закрыта','Небольшая спекулятивная позиция.'],vtb:['ВТБ','20 акций · ≈5%','Часть прибыли уже зафиксирована в сделке №1.']};
 const cv=document.getElementById('space'),field=document.getElementById('constellation'),ci=document.getElementById('constInfo');if(cv&&field){const ctx=cv.getContext('2d');function draw(){const d=devicePixelRatio||1,r=field.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;ctx.scale(d,d);ctx.clearRect(0,0,r.width,r.height);const core=field.querySelector('[data-key=capital]').getBoundingClientRect(),fr=field.getBoundingClientRect(),cx=core.left-fr.left+core.width/2,cy=core.top-fr.top+core.height/2;field.querySelectorAll('.node:not(.core)').forEach(n=>{const nr=n.getBoundingClientRect(),x=nr.left-fr.left+nr.width/2,y=nr.top-fr.top+nr.height/2,g=ctx.createLinearGradient(cx,cy,x,y);g.addColorStop(0,'rgba(201,255,74,.32)');g.addColorStop(1,'rgba(101,117,255,.08)');ctx.strokeStyle=g;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,cy);ctx.quadraticCurveTo((cx+x)/2+18,(cy+y)/2-12,x,y);ctx.stroke()})}draw();addEventListener('resize',draw);field.querySelectorAll('.node').forEach(n=>{n.onmouseenter=()=>{field.querySelectorAll('.node').forEach(x=>x.classList.remove('focus'));n.classList.add('focus');let a=infoMap[n.dataset.key];ci.innerHTML='<div class="label">'+a[0]+'</div><div class="big">'+a[1]+'</div><div class="mini">'+a[2]+'</div>'};n.onmouseleave=()=>n.classList.remove('focus')})}
 
 const fs=document.getElementById('capitalFlow'),fo=document.getElementById('flowOrb');if(fs&&fo){fs.addEventListener('pointermove',e=>{const r=fs.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;fs.style.setProperty('--mx',x+'%');fs.style.setProperty('--my',y+'%');const dx=(x-50)*.08,dy=(y-50)*.08;fo.style.transform='translate(calc(-50% + '+dx+'px),calc(-50% + '+dy+'px))'})}
@@ -61,7 +61,7 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  D.positions.forEach(p=>p.weight=D.portfolio.total?100*p.value/D.portfolio.total:0);
  D.computed={
   invested:D.positions.reduce((a,p)=>a+p.value,0),
-  realized:D.trades.reduce((a,t)=>a+t.netProfit,0),
+  realized:D.week.realized,
   commissions:D.trades.reduce((a,t)=>a+t.commission,0),
   weekProgress:D.week.target?100*D.week.realized/D.week.target:0,
   largest:[...D.positions].sort((a,b)=>b.value-a.value)[0]
@@ -96,7 +96,7 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
  set('analyticsUpdated','Последний снимок · '+(snaps.at(-1)?.date||D.meta.updated));
  set('analyticsRealized',(C.realized>=0?'+':'')+R.rub(C.realized,2));
- const unreal=D.portfolio.pnl-C.realized;set('analyticsUnrealized',(unreal>=0?'+':'')+R.rub(unreal,2));
+ set('analyticsUnrealized','не рассчитано');
  set('analyticsFees',R.rub(C.commissions,2));set('analyticsTrades',D.trades.length);
  set('activeResult',(C.realized>=0?'+':'')+R.rub(C.realized,2));
  set('snapshotCount',snaps.length+' '+(snaps.length===1?'снимок':'снимков'));
