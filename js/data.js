@@ -1,5 +1,5 @@
 window.RAZGON_DATA={
- meta:{build:"004.25",level:"07",updated:"15.10.2026 02:08 · снимок приложения"},
+ meta:{build:"004.26",level:"07",updated:"15.10.2026 02:08 · снимок приложения"},
  portfolio:{total:21307.24,brokerage:21307.24,contributed:19900,cash:6751.93,cashAsOf:"15.10.2026 02:07",pnl:1407.24,pnlPct:7.0715578,brokerOpenPositionsPct:1.49},
  week:{number:2,day:4,target:500,realized:540.61,period:"12–18.10.2026",buyFeesVisible:12.88},
  positions:[
@@ -39,9 +39,9 @@ window.RAZGON_DATA={
   {date:"14.10.2026",ticker:"GAZP",side:"SELL",qty:10,amount:1044.80,commission:3.33},
   {date:"14.10.2026",ticker:"SBERP",side:"SELL",qty:18,amount:5144.22,commission:15.43},
   {date:"12.10.2026",ticker:"ROSN",side:"SELL",qty:10,amount:3760.50,commission:11.28},
-  {date:"14.10.2026",type:"CREDIT",amount:154.76,classification:"Требует подтверждения: подарок или личное пополнение"}
+  {date:"14.10.2026",type:"CREDIT",amount:154.76,classification:"Поступление от подарочной Роснефти; не личный взнос; не прибыль от торговых сделок"}
  ],
  accountScope:"Только брокерский счёт",
- accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"Подарок не прибавлять второй раз; поступление 154,76 ₽ требует классификации",withdrawalsKnown:0,withdrawalsConfirmed:false},
- weekAudit:{period:"12–18.10.2026",status:"Промежуточно",notes:"Продажи Роснефти, Сбербанка и Газпрома: 540,61 ₽ после комиссий продаж. Комиссии покупок Озона и Ростелекома ещё 12,88 ₽. Поступление 154,76 ₽ требует классификации. Итог не окончательный."}
+ accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"154,76 ₽ — поступление от подарочной Роснефти; не личный взнос и не прибыль от торговых сделок; входит в брокерский баланс",withdrawalsKnown:0,withdrawalsConfirmed:false},
+ weekAudit:{period:"12–18.10.2026",status:"Промежуточно",notes:"Продажи Роснефти, Сбербанка и Газпрома: 540,61 ₽ после комиссий продаж. Комиссии покупок Озона и Ростелекома ещё 12,88 ₽. Поступление 154,76 ₽ — подарочная Роснефть, не личный взнос. Итог не окончательный."}
 };
