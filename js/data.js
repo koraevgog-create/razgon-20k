@@ -1,21 +1,18 @@
 window.RAZGON_DATA={
- meta:{build:"004.24",level:"07",updated:"11.10.2026 14:21 · данные пользователя"},
- portfolio:{total:20915.89,brokerage:20915.89,contributed:19900,cash:1842.35,cashAsOf:"11.10.2026 12:37 · требует обновления",pnl:1015.89,pnlPct:5.1,brokerOpenPositionsPct:2.38},
- week:{number:1,day:7,target:500,realized:403.57},
+ meta:{build:"004.25",level:"07",updated:"15.10.2026 02:08 · снимок приложения"},
+ portfolio:{total:21307.24,brokerage:21307.24,contributed:19900,cash:6751.93,cashAsOf:"15.10.2026 02:07",pnl:1407.24,pnlPct:7.0715578,brokerOpenPositionsPct:1.49},
+ week:{number:2,day:4,target:500,realized:540.61,period:"12–18.10.2026",buyFeesVisible:12.88},
  positions:[
-  {ticker:"YDEX",name:"Яндекс",qty:2,price:3385.5,value:6771,pnl:-125.5,pnlPct:-1.83},
-  {ticker:"ROSN",name:"Роснефть",qty:10,price:378.5,value:3785,pnl:255.5,pnlPct:7.23},
-  {ticker:"SBERP",name:"Сбербанк-п",qty:15,price:285.47,value:4282.05,pnl:252,pnlPct:6.25},
-  {ticker:"RTKM",name:"Ростелеком",qty:30,price:40.24,value:1207.2,pnl:18.9,pnlPct:1.59},
-  {ticker:"VTBR",name:"ВТБ",qty:20,price:55.245,value:1104.9,pnl:26.5,pnlPct:2.45},
-  {ticker:"GAZP",name:"Газпром",qty:10,price:101.9,value:1019,pnl:54.2,pnlPct:5.61},
-  {ticker:"ARLIFT",name:"Арлифт 001Р-01 · облигация",qty:1,price:854.08,value:854.08,pnl:12.8,pnlPct:1.52}
+  {ticker:"YDEX",name:"Яндекс",qty:2,price:3487,value:6974,pnl:137.5,pnlPct:2.01},
+  {ticker:"OZON",name:"Озон",qty:1,price:3514,value:3514,pnl:19.5,pnlPct:0.55},
+  {ticker:"RTKM",name:"Ростелеком",qty:50,price:42.41,value:2120.5,pnl:131.8,pnlPct:6.62},
+  {ticker:"VTBR",name:"ВТБ",qty:20,price:55.015,value:1100.3,pnl:21.9,pnlPct:2.03},
+  {ticker:"ARLIFT",name:"Арлифт 001Р-01 · облигация",qty:1,price:846.51,value:846.51,pnl:3.3,pnlPct:0.39}
  ],
- extras:[
-  {ticker:"ROSN_GIFT",name:"Роснефть · подарок · входит в баланс, не отдельный доход",qty:null,price:null,value:155.18,pnl:33.87,pnlPct:27.91}
- ],
+ extras:[],
  snapshots:[
-  {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,brokerOpenPositionsPct:2.38,cash:null}
+  {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,brokerOpenPositionsPct:2.38,cash:null},
+  {date:"15.10.2026",time:"02:07",total:21307.24,pnl:1407.24,pnlPct:7.0715578,brokerOpenPositionsPct:1.49,cash:6751.93}
  ],
  events:[{id:"e-001",date:"09.10.2026",ticker:"YDEX",title:"Проверить причины резкого движения цены",impact:"uncertain",priority:"high",status:"needs_verification",summary:"Цена заметно снизилась относительно предыдущего снимка. Причина движения не подтверждена внутри журнала; необходима проверка первичных источников.",sourceUrl:"",decision:"Новые покупки отложены до проверки причин и риска концентрации.",decisionDate:"09.10.2026"}],
  radar:[
@@ -29,9 +26,22 @@ window.RAZGON_DATA={
  trades:[
   {id:1,date:"06.10.2026",ticker:"VTBR",side:"SELL",qty:8,price:55.23,grossProfit:41.44,commission:1.33,netProfit:40.11},
   {id:2,date:"10.10.2026",ticker:"VKCO",side:"SELL",qty:5,price:123.95,grossProfit:15.25,commission:1.86,netProfit:13.39},
-  {id:3,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07}
+  {id:3,date:"11.10.2026",ticker:"ROSN",side:"SELL",qty:5,price:378.5,grossProfit:355.75,commission:5.68,netProfit:350.07},
+  {id:4,date:"12.10.2026",ticker:"ROSN",side:"SELL",qty:10,price:376.05,grossProfit:231,commission:11.28,netProfit:219.72},
+  {id:5,date:"14.10.2026",ticker:"SBERP",side:"SELL",qty:18,price:285.79,grossProfit:259.65,commission:15.43,netProfit:244.22},
+  {id:6,date:"14.10.2026",ticker:"GAZP",side:"SELL",qty:10,price:104.48,grossProfit:80,commission:3.33,netProfit:76.67}
+ ],
+ transactions:[
+  {date:"11.10.2026",ticker:"YDEX",side:"BUY",qty:1,amount:3355.50,commission:10.07},
+  {date:"11.10.2026",ticker:"RTKM",side:"BUY",qty:20,amount:800.40,commission:2.40},
+  {date:"11.10.2026",ticker:"SBERP",side:"BUY",qty:3,amount:854.52,commission:2.56},
+  {date:"14.10.2026",ticker:"OZON",side:"BUY",qty:1,amount:3494.50,commission:10.48},
+  {date:"14.10.2026",ticker:"GAZP",side:"SELL",qty:10,amount:1044.80,commission:3.33},
+  {date:"14.10.2026",ticker:"SBERP",side:"SELL",qty:18,amount:5144.22,commission:15.43},
+  {date:"12.10.2026",ticker:"ROSN",side:"SELL",qty:10,amount:3760.50,commission:11.28},
+  {date:"14.10.2026",type:"CREDIT",amount:154.76,classification:"Требует подтверждения: подарок или личное пополнение"}
  ],
  accountScope:"Только брокерский счёт",
- accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"Стоимость подарка включена в общий баланс, отдельно к прибыли не прибавлять",withdrawalsKnown:0,withdrawalsConfirmed:false},
- weekAudit:{period:"05–11.10.2026",status:"Предварительно",notes:"Включены подтверждённые продажи ВТБ, VK и Роснефти. Комиссия Роснефти 5,68 ₽ показана рядом с операцией, но требует сверки; другие расходы, налоги и операции могут изменить результат."}
+ accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"Подарок не прибавлять второй раз; поступление 154,76 ₽ требует классификации",withdrawalsKnown:0,withdrawalsConfirmed:false},
+ weekAudit:{period:"12–18.10.2026",status:"Промежуточно",notes:"Продажи Роснефти, Сбербанка и Газпрома: 540,61 ₽ после комиссий продаж. Комиссии покупок Озона и Ростелекома ещё 12,88 ₽. Поступление 154,76 ₽ требует классификации. Итог не окончательный."}
 };
