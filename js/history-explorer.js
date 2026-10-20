@@ -1,5 +1,5 @@
 /* History explorer · uses only confirmed snapshots and recorded closed trades. */
-(()=>{const D=window.RAZGON_DATA;if(!D)return;
+(()=>{function initialize(){const D=window.RAZGON_DATA;if(!D)return;
 const iso=s=>{const [d,m,y]=s.split('.');return y+'-'+m+'-'+d};
 const money=n=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
 const fmt=s=>new Date(s+'T12:00:00').toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'});
@@ -35,5 +35,6 @@ const table=document.createElement('details');const summary=document.createEleme
 }
 range.addEventListener('change',()=>{const custom=range.value==='custom';from.disabled=!custom;to.disabled=!custom;render()});group.addEventListener('change',render);from.addEventListener('change',render);to.addEventListener('change',render);from.disabled=true;to.disabled=true;render();
 }
-attach('equityChart','capital');attach('tradeHistoryChart','trade');attach('strategyHistoryChart','capital');
+attach('equityChart','capital');attach('tradeHistoryChart','trade');attach('strategyHistoryChart','capital');}
+if(window.RAZGON_HISTORY?.snapshots)initialize();else document.addEventListener('razgon-history-ready',initialize,{once:true});
 })();
