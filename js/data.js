@@ -1,6 +1,6 @@
 window.RAZGON_DATA={
- meta:{build:"004.28",level:"07",updated:"20.10.2026 12:32 · снимок приложения"},
- portfolio:{total:21509.71,brokerage:21509.71,contributed:19900,cash:14773.43,cashAsOf:"20.10.2026 12:32",pnl:1609.71,pnlPct:8.089,brokerOpenPositionsPct:0.76,marginBorrowed:1177,marginLimitRemaining:189354,otherAccounts:225.92},
+ meta:{build:"004.29",level:"07",updated:"20.10.2026 12:32 · снимок приложения"},
+ portfolio:{total:21509.71,brokerage:21509.71,contributed:19900,cash:14773.43,cashAsOf:"20.10.2026 12:32",pnl:1454.95,pnlPct:7.3113,brokerOpenPositionsPct:0.76,marginBorrowed:1177,marginLimitRemaining:189354,otherAccounts:225.92,giftExcluded:154.76,adjustedCapital:21354.95,adjustedDifference:1454.95,adjustedPct:7.3113},
  week:{number:3,day:2,target:500,realized:191.36,period:"19–25.10.2026",buyFeesVisible:0.28,previousWeekRealized:723.38,previousWeekBuyFees:31.32},
  positions:[
   {ticker:"OZON",name:"Озон",qty:1,price:3532,value:3532,pnl:37.5,pnlPct:1.07},
@@ -13,7 +13,7 @@ window.RAZGON_DATA={
  snapshots:[
   {date:"11.10.2026",time:"14:21",total:20915.89,pnl:1015.89,pnlPct:5.10,brokerOpenPositionsPct:2.38,cash:null},
   {date:"15.10.2026",time:"02:07",total:21307.24,pnl:1407.24,pnlPct:7.0715578,brokerOpenPositionsPct:1.49,cash:6751.93},
-  {date:"20.10.2026",time:"12:32",total:21509.71,pnl:1609.71,pnlPct:8.089,brokerOpenPositionsPct:0.76,cash:14773.43}
+  {date:"20.10.2026",time:"12:32",total:21509.71,pnl:1454.95,pnlPct:7.3113,brokerOpenPositionsPct:0.76,cash:14773.43}
  ],
  events:[{id:"e-001",date:"09.10.2026",ticker:"YDEX",title:"Проверить причины резкого движения цены",impact:"uncertain",priority:"high",status:"needs_verification",summary:"Цена заметно снизилась относительно предыдущего снимка. Причина движения не подтверждена внутри журнала; необходима проверка первичных источников.",sourceUrl:"",decision:"Новые покупки отложены до проверки причин и риска концентрации.",decisionDate:"09.10.2026"}],
  radar:[
@@ -54,6 +54,6 @@ window.RAZGON_DATA={
   {date:"20.10.2026",ticker:"SBER",side:"SHORT_SELL",qty:4,amount:1171.40,commission:3.51,classification:"Открытие короткой позиции; прибыль не реализована, себестоимость не требуется до закрытия"}
  ],
  accountScope:"Только брокерский счёт",
- accountingPolicy:{primary:"Баланс брокерского счёта минус чистые взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"154,76 ₽ — поступление от подарочной Роснефти; не личный взнос и не прибыль от торговых сделок; входит в брокерский баланс",withdrawalsKnown:0,withdrawalsConfirmed:false},
+ accountingPolicy:{primary:"(Баланс брокерского счёта − 154,76 ₽ подарка) − известные личные взносы",openPositionsPct:"Показатель брокера для открытых позиций, не общая доходность счёта",gift:"154,76 ₽ — исключается однократно из расчётного капитала и результатов относительно взносов; не исключается из реального баланса брокера",withdrawalsKnown:0,withdrawalsConfirmed:false},
  weekAudit:{period:"19–25.10.2026",status:"Промежуточно",notes:"Неделя 2 закрыта: 723,38 ₽ по продажам после комиссий продаж; комиссия покупки Озона 10,48 ₽ и Делимобиля 20,84 ₽ не включены. Неделя 3: 191,36 ₽ по закрытым продажам после комиссий; комиссии покупок Делимобиля 0,28 ₽ отдельно. Открыт шорт 4 акций Сбербанка, комиссия 3,51 ₽ отдельно."}
 };
