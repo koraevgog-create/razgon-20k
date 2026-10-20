@@ -1,4 +1,4 @@
-/* BUILD 004.29 — single source of truth for weekly figures and account balance. */
+/* BUILD 004.30 — single source of truth for weekly figures and account balance. */
 (function(){
 'use strict';
 const D=window.RAZGON_DATA;if(!D)return;
@@ -15,9 +15,9 @@ function render(){
  document.querySelectorAll('.commandStrip .cmd:nth-child(3)').forEach(x=>{x.innerHTML='<div><span>НЕДЕЛЯ №'+current.number+' · '+D.week.period.slice(0,5)+'.10</span><br><strong>'+money+' / '+fmt(target,0)+'</strong><br><span>ПРОМЕЖУТОЧНО · ДЕНЬ '+day+'/7</span></div><b>'+progress.toFixed(1).replace('.',',')+'%</b>'});
  document.querySelectorAll('.ringCore .money').forEach(x=>{x.classList.remove('counter');x.textContent=money});
  set('.ringCore .percent',progressLabel+' · ПРОМЕЖУТОЧНО');document.querySelectorAll('.ringCore .celebrate').forEach(el=>el.style.display=current.net>=target?'':'none');
- const ring=document.getElementById('ring');if(ring){const p=Math.max(0,Math.min(100,progress));ring.style.setProperty('--progress',p+'%');ring.style.setProperty('--needle-angle',p*3.6+'deg');ring.style.setProperty('--gauge-color',p<30?'#fa5367':p<70?'#f5bd47':'#93e64e');ring.setAttribute('aria-label','Неделя '+current.number+': '+progressLabel+' от цели')};
+ const ring=document.getElementById('ring');if(ring){const p=Math.max(0,Math.min(100,progress));ring.style.setProperty('--progress',p+'%');ring.style.setProperty('--needle-angle',p*3.6+'deg');ring.style.setProperty('--gauge-color',p<30?'#fa5367':p<80?'#f5bd47':'#93e64e');ring.setAttribute('aria-label','Неделя '+current.number+': '+progressLabel+' от цели')};
  set('.floatChip.one',signed(current.net)+' по продажам этой недели');
- const milestones=[50,100,150,200,250,300,350,400,450,target].filter((v,i,a)=>v<=target&&a.indexOf(v)===i);const next=milestones.find(v=>v>current.net);document.querySelectorAll('.floatChip.two').forEach(el=>{el.innerHTML=next?'Следующий рубеж <b>'+fmt(next,0)+'</b>':'<b>Цель '+fmt(target,0)+' достигнута</b>'});
+ const milestones=[150,400,target];const next=milestones.find(v=>v>current.net);document.querySelectorAll('.floatChip.two').forEach(el=>{el.innerHTML=next?'Следующий рубеж <b>'+fmt(next,0)+'</b>':'<b>Цель '+fmt(target,0)+' достигнута</b>'});
  set('.heroMeta>div:nth-child(3) b',String(current.rows.length));
  set('.heroMeta>div:nth-child(3) span','ПРОДАЖИ ЭТОЙ НЕДЕЛИ');
  set('[data-live="week-progress"]',progressLabel);
