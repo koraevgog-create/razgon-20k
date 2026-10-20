@@ -1,7 +1,7 @@
 window.RAZGON_DATA={
  meta:{build:"004.28",level:"07",updated:"20.10.2026 12:32 · снимок приложения"},
  portfolio:{total:21509.71,brokerage:21509.71,contributed:19900,cash:14773.43,cashAsOf:"20.10.2026 12:32",pnl:1609.71,pnlPct:8.089,brokerOpenPositionsPct:0.76,marginBorrowed:1177,marginLimitRemaining:189354,otherAccounts:225.92},
- week:{number:3,day:2,target:500,realized:191.36,period:"19–25.10.2026",buyFeesVisible:0.28,previousWeekRealized:723.38},
+ week:{number:3,day:2,target:500,realized:191.36,period:"19–25.10.2026",buyFeesVisible:0.28,previousWeekRealized:723.38,previousWeekBuyFees:31.32},
  positions:[
   {ticker:"OZON",name:"Озон",qty:1,price:3532,value:3532,pnl:37.5,pnlPct:1.07},
   {ticker:"YDEX",name:"Яндекс",qty:1,price:3467,value:3467,pnl:111.5,pnlPct:3.32},
