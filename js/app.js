@@ -99,30 +99,65 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
  Object.entries(nodeMap).forEach(([key,ticker])=>{const n=document.querySelector('.node[data-key="'+key+'"] small'),p=D.positions.find(x=>x.ticker===ticker);if(n&&p)n.textContent='≈'+Math.round(p.weight)+'%'});
 })();
 
-/* BUILD 004.05 — real snapshot analytics */
+/* BUILD 004.32 — interactive history charts from verified snapshots and trade ledger */
 (()=>{
- const R=window.RAZGON,D=R&&R.data;if(!D||!document.getElementById('equityChart'))return;
- const snaps=D.snapshots||[], C=D.computed;
- const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set('analyticsUpdated','Последний снимок · '+(snaps.at(-1)?.date||D.meta.updated));
- set('analyticsRealized',(C.realized>=0?'+':'')+R.rub(C.realized,2));
- set('analyticsUnrealized','не рассчитано');
- set('analyticsFees',R.rub(C.commissions,2));set('analyticsTrades',D.trades.length);
- set('activeResult',(C.realized>=0?'+':'')+R.rub(C.realized,2));
- set('snapshotCount',snaps.length+' '+(snaps.length===1?'снимок':'снимков'));
- if(!snaps.length)return;
- const start=snaps[0],last=snaps.at(-1),delta=last.total-start.total;
- set('equityStart','Старт · '+start.date+' · '+R.rub(start.total,2));
- set('equityLast','Последний · '+last.date+' · '+R.rub(last.total,2));
- set('equityChange',(delta>=0?'+':'')+R.rub(delta,2));
- const line=document.getElementById('equityLine'),area=document.getElementById('equityArea'),dots=document.getElementById('equityDots'),empty=document.getElementById('equityEmpty');
- const vals=snaps.map(x=>x.total),min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,Math.max(max*.01,100));
- const pts=snaps.map((x,i)=>{const px=snaps.length===1?350:24+i*(652/(snaps.length-1));const py=220-((x.total-(min-span*.15))/(span*1.3))*170;return [px,Math.max(28,Math.min(228,py))]});
- if(snaps.length>1){const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');line.setAttribute('d',d);area.setAttribute('d',d+' L'+pts.at(-1)[0]+' 245 L'+pts[0][0]+' 245 Z');empty.style.display='none'}else{line.setAttribute('d','');area.setAttribute('d','')}
- dots.innerHTML=pts.map((p,i)=>'<circle class="equityDot" cx="'+p[0]+'" cy="'+p[1]+'" r="5"><title>'+snaps[i].date+' · '+R.rub(snaps[i].total,2)+'</title></circle>').join('');
- if(snaps.length<2)set('equityChange','История началась');
+ const D=window.RAZGON_DATA;if(!D)return;
+ const rub=n=>Number(n||0).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
+ const signed=n=>(n>=0?'+':'−')+rub(Math.abs(n));
+ const iso=d=>d.split('.').reverse().join('-');
+ const short=d=>d.slice(0,5);
+ const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const snaps=(D.snapshots||[]).slice().sort((a,b)=>iso(a.date).localeCompare(iso(b.date)));
+ const transactions=D.trades||[];
+ const weeks=[{n:1,start:'05.10.2026',end:'11.10.2026'},{n:2,start:'12.10.2026',end:'18.10.2026'},{n:3,start:'19.10.2026',end:'25.10.2026'}];
+ const dates=(from,to)=>{const a=new Date(iso(from)+'T12:00:00Z'),b=new Date(iso(to)+'T12:00:00Z'),out=[];for(let d=new Date(a);d<=b;d.setUTCDate(d.getUTCDate()+1))out.push(String(d.getUTCDate()).padStart(2,'0')+'.'+String(d.getUTCMonth()+1).padStart(2,'0')+'.'+d.getUTCFullYear());return out};
+ function chart(host,rows,opts={}){
+  if(!host)return;
+  const width=760,height=260,left=66,right=24,top=25,bottom=42;
+  if(!rows.length){host.textContent='Пока нет подтверждённых данных.';return}
+  const vals=rows.map(r=>r.value),lo=Math.min(0,...vals),hi=Math.max(0,...vals),pad=Math.max((hi-lo)*.15,opts.money?70:30),min=opts.zeroBaseline?Math.min(0,lo):Math.min(...vals)-pad,max=opts.zeroBaseline?hi+pad:Math.max(...vals)+pad;
+  const x=i=>left+(rows.length===1?.5:i/(rows.length-1))*(width-left-right);
+  const y=v=>top+(max-v)/Math.max(1,max-min)*(height-top-bottom);
+  const pts=rows.map((r,i)=>({x:x(i),y:y(r.value),r}));
+  const path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+' '+p.y.toFixed(2)).join(' ');
+  const grid=[0,.25,.5,.75,1].map(t=>{const v=max-t*(max-min),yy=top+t*(height-top-bottom);return '<line x1="'+left+'" x2="'+(width-right)+'" y1="'+yy+'" y2="'+yy+'" stroke="#343d45" stroke-opacity=".5"/><text x="'+(left-7)+'" y="'+(yy+4)+'" text-anchor="end" fill="#88949e" font-size="11">'+Math.round(v).toLocaleString('ru-RU')+'</text>'}).join('');
+  host.innerHTML='<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="'+esc(opts.title||'График')+'" style="width:100%;height:auto;display:block;overflow:visible">'+grid+'<path d="'+path+'" fill="none" stroke="#c9ff4a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'+pts.map((p,i)=>'<g class="historyPoint" data-idx="'+i+'" tabindex="0" role="button" aria-label="'+esc(p.r.label+' '+rub(p.r.value))+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="15" fill="transparent"/><circle cx="'+p.x+'" cy="'+p.y+'" r="5.5" fill="#c9ff4a" stroke="#101820" stroke-width="2"/></g>').join('')+pts.filter((p,i)=>rows.length<=8||i%Math.ceil(rows.length/7)===0||i===rows.length-1).map(p=>'<text x="'+p.x+'" y="'+(height-10)+'" text-anchor="middle" fill="#aab3bc" font-size="11">'+esc(p.r.axis||p.r.label)+'</text>').join('')+'</svg>';
+  const detail=opts.detail;
+  function show(i){const p=pts[i];if(!p)return;host.querySelectorAll('.historyPoint').forEach((el,j)=>{const c=el.querySelector('circle:last-child');c.setAttribute('r',j===i?'8':'5.5');c.setAttribute('fill',j===i?'#fff':'#c9ff4a')});if(detail)detail.innerHTML='<b>'+esc(p.r.label)+'</b><strong>'+rub(p.r.value)+'</strong><span>'+esc(p.r.note||'')+'</span>'}
+  host.querySelectorAll('.historyPoint').forEach((el,i)=>{el.addEventListener('mouseenter',()=>show(i));el.addEventListener('focus',()=>show(i));el.addEventListener('click',()=>show(i));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(i)}})});
+  show(rows.length-1);
+ }
+ function equityRows(mode){
+  if(mode==='snapshots')return snaps.map((s,i)=>({label:s.date+' · '+s.time,value:s.total,axis:short(s.date),note:(i?'Изменение с прошлого снимка: '+signed(s.total-snaps[i-1].total)+'. ':'')+'Подтверждённый снимок брокера. Расчётный капитал без подарка: '+rub(s.total-(iso(s.date)>='2026-10-14'?D.portfolio.giftExcluded:0))}));
+  const all=dates(snaps[0].date,snaps.at(-1).date);
+  if(mode==='days')return all.filter(d=>snaps.some(s=>s.date===d)).map(d=>{const s=snaps.find(v=>v.date===d);return {label:d,value:s.total,axis:short(d),note:'Подтверждённый снимок '+s.time+'. На остальные даты данных нет.'}});
+  return weeks.map(w=>{const ss=snaps.filter(s=>iso(s.date)>=iso(w.start)&&iso(s.date)<=iso(w.end));const last=ss.at(-1);return last?{label:'Неделя №'+w.n+' · '+last.date,value:last.total,axis:'№'+w.n,note:'Последний доступный снимок за неделю; не обязательно баланс на её закрытие.'}:null}).filter(Boolean);
+ }
+ const equityHost=document.getElementById('equityChart');
+ if(equityHost){
+  const old=equityHost.querySelector('svg');if(old)old.remove();const empty=equityHost.querySelector('#equityEmpty');if(empty)empty.remove();
+  const detail=document.getElementById('equityDetail');
+  const render=mode=>{chart(equityHost,equityRows(mode),{title:'История капитала',detail,money:true});document.querySelectorAll('[data-history-mode]').forEach(b=>b.classList.toggle('active',b.dataset.historyMode===mode))};
+  document.querySelectorAll('[data-history-mode]').forEach(b=>b.addEventListener('click',()=>render(b.dataset.historyMode)));
+  render('snapshots');
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  set('snapshotCount',snaps.length+' подтверждённых снимка');
+  set('equityStart','Первый · '+snaps[0].date+' · '+rub(snaps[0].total));
+  set('equityLast','Последний · '+snaps.at(-1).date+' · '+rub(snaps.at(-1).total));
+  set('equityChange',signed(snaps.at(-1).total-snaps[0].total));
+ }
+ const strategy=document.getElementById('strategyHistoryChart');if(strategy)chart(strategy,equityRows('snapshots'),{title:'История капитала по снимкам',detail:document.getElementById('strategyHistoryDetail'),money:true});
+ const history=document.getElementById('tradeHistoryChart');
+ if(history){
+  const all=dates('05.10.2026','20.10.2026');
+  const rows=all.map(d=>{const t=transactions.filter(v=>v.date===d);const gross=t.reduce((a,v)=>a+v.grossProfit,0),fees=t.reduce((a,v)=>a+v.commission,0);return {label:d,value:Math.round((gross-fees)*100)/100,axis:short(d),note:t.length?t.length+' закрытых продаж; прибыль до комиссий '+rub(gross)+', комиссии '+rub(fees):'Закрытых продаж в журнале нет'}});
+  history.innerHTML='<div class="historyControls"><button class="historyBtn active" data-trade-mode="days">Дни</button><button class="historyBtn" data-trade-mode="weeks">Недели</button></div><div id="tradeGraph"></div><div class="historyDetail" id="tradeDetail"></div>';
+  const graph=history.querySelector('#tradeGraph'),detail=history.querySelector('#tradeDetail');
+  const weekly=weeks.map(w=>{const t=transactions.filter(v=>iso(v.date)>=iso(w.start)&&iso(v.date)<=iso(w.end));const gross=t.reduce((a,v)=>a+v.grossProfit,0),fees=t.reduce((a,v)=>a+v.commission,0);return {label:'Неделя №'+w.n+' · '+w.start.slice(0,5)+'–'+w.end.slice(0,5),axis:'№'+w.n,value:Math.round((gross-fees)*100)/100,note:t.length+' закрытых продаж; комиссии продаж '+rub(fees)}}); 
+  const render=mode=>{chart(graph,mode==='days'?rows:weekly,{title:'Прибыль закрытых продаж',detail,zeroBaseline:true});history.querySelectorAll('[data-trade-mode]').forEach(b=>b.classList.toggle('active',b.dataset.tradeMode===mode))};
+  history.querySelectorAll('[data-trade-mode]').forEach(b=>b.addEventListener('click',()=>render(b.dataset.tradeMode)));render('weeks');
+ }
 })();
-
 /* BUILD 004.07 — Trading Radar renderer */
 (()=>{const R=window.RAZGON,D=R&&R.data,grid=document.getElementById('radarGrid');if(!D||!grid)return;const items=[...(D.radar||[])].sort((a,b)=>a.priority-b.priority);grid.innerHTML=items.map((x,i)=>'<article class="radarCard '+(i===0?'hot':'')+'"><div class="radarHead"><div><div class="radarTicker"><a href="company.html?ticker='+encodeURIComponent(x.ticker)+'">'+x.ticker+'</a></div><div class="radarName">'+x.name+'</div></div><span class="radarStatus">'+x.status+'</span></div><div class="radarAction"><div><span>ДЕЙСТВИЕ</span><b>'+x.action+'</b></div><div class="radarZone"><span>ЗОНА / РАЗМЕР</span><b>'+x.zone+'</b><small>'+x.size+'</small></div></div><div class="radarFields"><div class="radarField"><span>ТРИГГЕР</span><b>'+x.trigger+'</b></div><div class="radarField"><span>ОТМЕНА</span><b>'+x.invalidation+'</b></div><div class="radarField"><span>КАТАЛИЗАТОР</span><b>'+x.catalyst+'</b></div></div></article>').join('');const active=items.filter(x=>x.status==='WATCH').length;document.getElementById('radarActive').textContent=active;document.getElementById('radarNext').textContent=items[0]?.ticker+' · '+items[0]?.action;const bar=document.getElementById('radarWeekBar');if(bar)requestAnimationFrame(()=>bar.style.width=Math.min(100,D.computed.weekProgress)+'%')})();
 
