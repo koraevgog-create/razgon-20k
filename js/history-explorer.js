@@ -4,7 +4,7 @@ const iso=s=>{const [d,m,y]=s.split('.');return y+'-'+m+'-'+d};
 const money=n=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₽';
 const fmt=s=>new Date(s+'T12:00:00').toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'});
 const monday=s=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-(d.getDay()+6)%7);return d.toISOString().slice(0,10)};
-const snaps=(D.snapshots||[]).map(s=>({...s,key:iso(s.date)})).sort((a,b)=>a.key.localeCompare(b.key));
+const snaps=(window.RAZGON_HISTORY?.snapshots||D.snapshots||[]).map(s=>({...s,key:iso(s.date)})).sort((a,b)=>a.key.localeCompare(b.key));
 const trades=(D.trades||[]).filter(t=>t.side==='SELL').map(t=>({...t,key:iso(t.date)}));
 function attach(hostId,kind){const host=document.getElementById(hostId);if(!host)return;
 const wrap=document.createElement('section');wrap.className='hx';wrap.innerHTML='<div class="hx-controls"><label>Период <select class="hx-range"><option value="all">Всё время</option><option value="7">7 дней</option><option value="30">30 дней</option><option value="90">90 дней</option><option value="custom">Свои даты</option></select></label><label>Группировка <select class="hx-group"><option value="day">Дни</option><option value="week">Недели</option></select></label><label>От <input class="hx-from" type="date"></label><label>До <input class="hx-to" type="date"></label></div><div class="hx-status" aria-live="polite"></div><div class="hx-scroll"><svg class="hx-svg" viewBox="0 0 920 330" role="img" aria-label="Интерактивный график истории"></svg></div><div class="hx-detail" aria-live="polite">Наведите на точку или нажмите на неё</div><div class="hx-table"></div>';
