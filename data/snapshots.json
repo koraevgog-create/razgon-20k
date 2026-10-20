@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "policy": {
+    "source": "confirmed broker snapshots only",
+    "giftExcludedOnce": 154.76,
+    "missingDates": "unknown; never interpolate"
+  },
+  "snapshots": [
+    {
+      "date": "11.10.2026",
+      "time": "14:21",
+      "total": 20915.89,
+      "pnl": 1015.89,
+      "pnlPct": 5.1,
+      "brokerOpenPositionsPct": 2.38,
+      "cash": null
+    },
+    {
+      "date": "15.10.2026",
+      "time": "02:07",
+      "total": 21307.24,
+      "pnl": 1407.24,
+      "pnlPct": 7.0715578,
+      "brokerOpenPositionsPct": 1.49,
+      "cash": 6751.93
+    },
+    {
+      "date": "20.10.2026",
+      "time": "12:32",
+      "total": 21509.71,
+      "pnl": 1454.95,
+      "pnlPct": 7.3113,
+      "brokerOpenPositionsPct": 0.76,
+      "cash": 14773.43
+    }
+  ]
+}
