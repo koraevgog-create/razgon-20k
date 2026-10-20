@@ -116,7 +116,7 @@ const mm=document.getElementById('missionMain');if(mm)mm.addEventListener('point
   const width=760,height=260,left=66,right=24,top=25,bottom=42;
   if(!rows.length){host.textContent='Пока нет подтверждённых данных.';return}
   const vals=rows.map(r=>r.value),lo=Math.min(...vals),hi=Math.max(...vals),pad=Math.max((hi-lo)*.15,opts.money?70:30),min=opts.zeroBaseline?Math.min(0,lo):Math.min(...vals)-pad,max=opts.zeroBaseline?hi+pad:Math.max(...vals)+pad;
-  const x=i=>left+(rows.length===1?.5:i/(rows.length-1))*(width-left-right);
+  const x=i=>left+(rows.length===1?0.5:i/(rows.length-1))*(width-left-right);
   const y=v=>top+(max-v)/Math.max(1,max-min)*(height-top-bottom);
   const pts=rows.map((r,i)=>({x:x(i),y:y(r.value),r}));
   const path=pts.map((p,i)=>(i?'L':'M')+p.x.toFixed(2)+' '+p.y.toFixed(2)).join(' ');
