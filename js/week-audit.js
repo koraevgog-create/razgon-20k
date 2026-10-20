@@ -1,4 +1,4 @@
-/* BUILD 004.30 — single source of truth for weekly figures and account balance. */
+/* BUILD 004.31 — single source of truth for weekly figures and account balance. */
 (function(){
 'use strict';
 const D=window.RAZGON_DATA;if(!D)return;
@@ -21,7 +21,7 @@ function render(){
  set('.heroMeta>div:nth-child(3) b',String(current.rows.length));
  set('.heroMeta>div:nth-child(3) span','ПРОДАЖИ ЭТОЙ НЕДЕЛИ');
  set('[data-live="week-progress"]',progressLabel);
- const bar=document.getElementById('weekbar');if(bar)bar.style.width=Math.max(0,Math.min(100,progress))+'%';
+ const bar=document.getElementById('weekbar');if(bar){bar.style.width=Math.max(0,Math.min(100,progress))+'%';bar.style.background=progress<30?'#fa5367':progress<80?'#f5bd47':'#93e64e';}
  document.querySelectorAll('.sectionHead').forEach(h=>{if(h.querySelector('h2')?.textContent==='Прогресс недели'){const p=h.querySelector('p');if(p)p.textContent=money+' / '+fmt(target)}});
  set('#analyticsUpdated','Снимок '+D.meta.updated+' · вручную');
  set('.capitalCore b',fmt(D.portfolio.total,0));set('.flowOrb b',fmt(D.portfolio.total,0));
