@@ -32,3 +32,18 @@
  .commandStrip{grid-template-columns:1fr!important}
  .siteTabs>a,.workspaceMenu>summary{font-size:11px!important}
 }
+
+/* BUILD 004.32 — interactive history */
+.historyControls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 12px}
+.historyBtn{border:1px solid rgba(184,202,212,.23);border-radius:10px;background:#151b21;color:#aeb9c1;padding:9px 15px;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.historyBtn.active,.historyBtn:hover{background:#c9ff4a;color:#101510;border-color:#c9ff4a}
+.historyHelp{color:#8896a3;font-size:12px;line-height:1.6;margin-bottom:12px}
+.historyChart{min-height:180px}
+.historyDetail{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:12px;padding:13px 15px;border:1px solid rgba(184,202,212,.14);background:rgba(255,255,255,.025);border-radius:12px;color:#a9b5c0;font-size:12px}
+.historyDetail b{color:#e9f0f4;font-size:13px}
+.historyDetail strong{color:#c9ff4a;font-size:17px}
+.historyDetail span{flex-basis:100%;line-height:1.5}
+.historyPoint{cursor:pointer;outline:none}
+.historyPoint:focus circle:last-child{stroke:#fff;stroke-width:3}
+#strategyHistoryChart svg{max-height:245px}
+@media(max-width:640px){.historyDetail{gap:8px}.historyBtn{padding:9px 11px}.historyChart svg{min-width:0}}
