@@ -1,5 +1,5 @@
 window.RAZGON_DATA={
- meta:{build:"004.32",level:"07",updated:"20.10.2026 12:32 · снимок приложения"},
+ meta:{build:"004.35",level:"07",updated:"20.10.2026 12:32 · снимок приложения"},
  portfolio:{total:21509.71,brokerage:21509.71,contributed:19900,cash:14773.43,cashAsOf:"20.10.2026 12:32",pnl:1454.95,pnlPct:7.3113,brokerOpenPositionsPct:0.76,marginBorrowed:1177,marginLimitRemaining:189354,otherAccounts:225.92,giftExcluded:154.76,adjustedCapital:21354.95,adjustedDifference:1454.95,adjustedPct:7.3113},
  week:{number:3,day:2,target:500,realized:191.36,period:"19–25.10.2026",buyFeesVisible:0.28,previousWeekRealized:723.38,previousWeekBuyFees:31.32},
  positions:[
